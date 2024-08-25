@@ -1,6 +1,7 @@
 package com.nqt.identity_service.service.role;
 
 import com.nqt.identity_service.dto.request.RoleRequest;
+import com.nqt.identity_service.dto.request.RoleUpdateRequest;
 import com.nqt.identity_service.dto.response.RoleResponse;
 import com.nqt.identity_service.entity.Permission;
 import com.nqt.identity_service.entity.Role;
@@ -45,8 +46,8 @@ public class RoleServiceImp implements RoleService{
     }
 
     @Override
-    public RoleResponse updateRole(RoleRequest request) {
-        Role role = roleRepository.findById(request.getName())
+    public RoleResponse updateRole(String name, RoleUpdateRequest request) {
+        Role role = roleRepository.findById(name)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
 
         roleMapper.updateRole(role, request);
@@ -70,6 +71,7 @@ public class RoleServiceImp implements RoleService{
         return roleRepository.findAll().stream().map(roleMapper::toRoleResponse).toList();
     }
 
+    // Only allow to delete when there's no user has this role
     @Override
     public void deleteRoleByName(String name) {
         roleRepository.deleteById(name);

@@ -31,6 +31,9 @@ message:
       delete: "Role has been deleted!"
     permission:
       delete: "Permission has been deleted!"
+    authentication:
+      change-password: "Password has been changed!"
+      logout: "Account has been logged out!"
 
 init-info:
   role: "ADMIN"

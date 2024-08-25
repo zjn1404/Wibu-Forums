@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,8 @@ public class ApplicationInitConfig {
 
     UserRepository userRepository;
     RoleRepository roleRepository;
+
+    PasswordEncoder passwordEncoder;
 
     @Bean
     ApplicationRunner applicationRunner(
@@ -41,7 +44,7 @@ public class ApplicationInitConfig {
 
                 User user = User.builder()
                         .username(username)
-                        .password(password)
+                        .password(passwordEncoder.encode(password))
                         .email(email)
                         .phoneNumber(phoneNumber)
                         .firstName(firstName)

@@ -14,6 +14,8 @@ public interface UserService {
 
     UserResponse getUserById(String userId);
 
+    UserResponse getMyInfo();
+
     List<UserResponse> getAllUsers();
 
     void deleteUserById(String userId);

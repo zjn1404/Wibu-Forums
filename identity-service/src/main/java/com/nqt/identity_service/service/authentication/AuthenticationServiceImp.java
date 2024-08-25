@@ -62,6 +62,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
@@ -195,7 +196,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 .build();
     }
 
-    private JWTClaimsSet  buildRefreshTokenClaims(User user, String id, String otherId, long duration) {
+    private JWTClaimsSet buildRefreshTokenClaims(User user, String id, String otherId, long duration) {
         return new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
                 .jwtID(id)

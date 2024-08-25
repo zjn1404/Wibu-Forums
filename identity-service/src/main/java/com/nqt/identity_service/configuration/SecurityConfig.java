@@ -2,6 +2,7 @@ package com.nqt.identity_service.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,17 +20,27 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_POST_ENDPOINTS = {
-      "/users"
+      "/users", "/auth/token", "/auth/refresh", "/auth/change-password", "/auth/logout",
+    };
+
+    private static final String[] PUBLIC_GET_ENPOINTS = {
+      "/users/{id}"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            CustomerJwtDecoder jwtDecoder
-    ) throws Exception {
+            CustomerJwtDecoder jwtDecoder,
+            AfterBearerTokenAuthenticationFilterExceptionHandler exceptionHandler)
+            throws Exception {
+
+        http.addFilterBefore(exceptionHandler, LogoutFilter.class);
+
         http.authorizeHttpRequests(
                 requests -> requests
-                        .requestMatchers(PUBLIC_POST_ENDPOINTS)
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENPOINTS)
                         .permitAll()
                         .anyRequest()
                         .authenticated()

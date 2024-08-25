@@ -1,6 +1,7 @@
 package com.nqt.identity_service.mapper;
 
 import com.nqt.identity_service.dto.request.RoleRequest;
+import com.nqt.identity_service.dto.request.RoleUpdateRequest;
 import com.nqt.identity_service.dto.response.RoleResponse;
 import com.nqt.identity_service.entity.Role;
 import org.mapstruct.Mapper;
@@ -15,7 +16,7 @@ public interface RoleMapper {
     Role toRole(RoleRequest request);
 
     @Mapping(target = "permissions", ignore = true)
-    void updateRole(@MappingTarget Role role, RoleRequest roleRequest);
+    void updateRole(@MappingTarget Role role, RoleUpdateRequest roleRequest);
 
     RoleResponse toRoleResponse(Role role);
 }

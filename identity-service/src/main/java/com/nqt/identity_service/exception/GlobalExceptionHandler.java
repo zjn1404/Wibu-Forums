@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiResponse<?>> handleAppException(AppException appException) {
         return ResponseEntity.status(appException.getErrorCode().httpStatus)
-                .body(ApiResponse.builder()
+                        .body(ApiResponse.builder()
                         .code(appException.getErrorCode().code)
                         .message(appException.getMessage())
                         .build());
