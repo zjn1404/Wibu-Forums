@@ -38,23 +38,23 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/token")
-    ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
         return new ApiResponse<>(authenticationService.authenticate(authenticationRequest));
     }
 
     @PostMapping("/refresh")
-    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest authenticationRequest) {
+    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest authenticationRequest) {
         return new ApiResponse<>(authenticationService.refreshToken(authenticationRequest));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/introspect")
-    ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest authenticationRequest) {
+    public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest authenticationRequest) {
         return new ApiResponse<>(authenticationService.introspect(authenticationRequest));
     }
 
     @PostMapping("/change-password")
-    ApiResponse<Object> changePassword(@RequestBody @Valid ChangePasswordRequest authenticationRequest) {
+    public ApiResponse<Object> changePassword(@RequestBody @Valid ChangePasswordRequest authenticationRequest) {
         authenticationService.changePassword(authenticationRequest);
 
         return ApiResponse.builder()
@@ -64,7 +64,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    ApiResponse<Object> logout(@RequestBody LogoutRequest authenticationRequest) {
+    public ApiResponse<Object> logout(@RequestBody LogoutRequest authenticationRequest) {
         authenticationService.logout(authenticationRequest);
 
         return ApiResponse.builder()

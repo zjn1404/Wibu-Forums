@@ -19,9 +19,8 @@ public enum ErrorCode {
     USERNAME_INVALID(2001, HttpStatus.BAD_REQUEST, "Username must be at least 4 characters"),
     PASSWORD_INVALID(2002, HttpStatus.BAD_REQUEST, "Password must be at least 8 characters"),
     THE_SAME_PASSWORD(2003, HttpStatus.BAD_REQUEST, "New Password Is The Same As Old Password"),
-    PAYMENT_INVALID(2004, HttpStatus.BAD_REQUEST, "Payment MUST BE AT LEAST 0"),
-    VERIFY_CODE_INCORRECT(2005, HttpStatus.BAD_REQUEST, "Verify Code Incorrect"),
-    PHONE_NUMBER_INVALID(2006, HttpStatus.BAD_REQUEST, "Phone Number Is Not Valid"),
+    VERIFY_CODE_INCORRECT(2004, HttpStatus.BAD_REQUEST, "Verify Code Incorrect"),
+    PHONE_NUMBER_INVALID(2005, HttpStatus.BAD_REQUEST, "Phone Number Is Not Valid"),
     // Existed error (25xx)
     USER_EXISTED(2501, HttpStatus.BAD_REQUEST, "User Existed"),
     ROLE_EXISTED(2502, HttpStatus.BAD_REQUEST, "Role Existed"),
