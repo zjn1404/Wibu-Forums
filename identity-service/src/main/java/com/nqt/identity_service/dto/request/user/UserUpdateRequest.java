@@ -23,9 +23,5 @@ public class UserUpdateRequest {
     @Size(min = 10, max = 10, message = "PHONE_NUMBER_INVALID")
     String phoneNumber;
 
-    String firstName;
-
-    String lastName;
-
     Set<String> roles;
 }

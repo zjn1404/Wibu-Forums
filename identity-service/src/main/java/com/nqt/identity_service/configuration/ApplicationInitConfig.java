@@ -33,9 +33,7 @@ public class ApplicationInitConfig {
             @Value("${init-info.username}") String username,
             @Value("${init-info.password}") String password,
             @Value("${init-info.email}") String email,
-            @Value("${init-info.phone-number}") String phoneNumber,
-            @Value("${init-info.first-name}") String firstName,
-            @Value("${init-info.last-name}") String lastName
+            @Value("${init-info.phone-number}") String phoneNumber
     ) {
         return args -> {
             if (!roleRepository.existsByName(adminRole)) {
@@ -47,8 +45,6 @@ public class ApplicationInitConfig {
                         .password(passwordEncoder.encode(password))
                         .email(email)
                         .phoneNumber(phoneNumber)
-                        .firstName(firstName)
-                        .lastName(lastName)
                         .roles(new HashSet<>(List.of(role)))
                         .build();
 

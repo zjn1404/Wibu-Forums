@@ -41,6 +41,7 @@ init-info:
   password: admin123
   email: admin@gmail.com
   phone-number: 1234567890
-  first-name: Admin
-  last-name: Admin
 
+app:
+  services:
+    profile: http://localhost:8081/profile

@@ -1,5 +1,6 @@
 package com.nqt.identity_service.service.user;
 
+import com.nqt.identity_service.dto.request.UserProfileCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserUpdateRequest;
 import com.nqt.identity_service.dto.response.UserResponse;
@@ -8,12 +9,15 @@ import com.nqt.identity_service.entity.User;
 import com.nqt.identity_service.exception.AppException;
 import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.mapper.UserMapper;
+import com.nqt.identity_service.mapper.UserProfileMapper;
 import com.nqt.identity_service.repository.RoleRepository;
 import com.nqt.identity_service.repository.UserRepository;
+import com.nqt.identity_service.repository.profileservice.ProfileClient;
 import com.nqt.identity_service.utils.Utils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,8 +35,10 @@ public class UserServiceImp implements UserService{
 
     UserRepository userRepository;
     RoleRepository roleRepository;
+    ProfileClient profileClient;
 
     UserMapper userMapper;
+    UserProfileMapper userProfileMapper;
 
     PasswordEncoder passwordEncoder;
 
@@ -51,8 +58,13 @@ public class UserServiceImp implements UserService{
             user.setRoles(new HashSet<>(roles));
         }
 
+        user = userRepository.save(user);
 
-        return userMapper.toUserResponse(userRepository.save(user));
+        UserProfileCreationRequest userCreationRequest = userProfileMapper.toUserProfileCreationRequest(request);
+        userCreationRequest.setUserId(user.getId());
+        profileClient.createUserProfile(userCreationRequest);
+
+        return userMapper.toUserResponse(user);
     }
 
     @Override

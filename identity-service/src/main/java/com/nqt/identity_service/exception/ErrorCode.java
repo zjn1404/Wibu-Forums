@@ -16,7 +16,7 @@ public enum ErrorCode {
 
     // Client error
     // Input error (2xxx)
-    USERNAME_INVALID(2001, HttpStatus.BAD_REQUEST, "Username must be at least 4 characters"),
+    USERNAME_INVALID(2001, HttpStatus.BAD_REQUEST, "Username must be at least 6 characters"),
     PASSWORD_INVALID(2002, HttpStatus.BAD_REQUEST, "Password must be at least 8 characters"),
     THE_SAME_PASSWORD(2003, HttpStatus.BAD_REQUEST, "New Password Is The Same As Old Password"),
     VERIFY_CODE_INCORRECT(2004, HttpStatus.BAD_REQUEST, "Verify Code Incorrect"),

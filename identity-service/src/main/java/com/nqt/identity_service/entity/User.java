@@ -32,12 +32,6 @@ public class User {
     @Column(name = "phone_number")
     String phoneNumber;
 
-    @Column(name = "first_name")
-    String firstName;
-
-    @Column(name = "last_name")
-    String lastName;
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH

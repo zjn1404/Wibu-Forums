@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -29,4 +30,8 @@ public class UserCreationRequest {
     String lastName;
 
     Set<String> roles;
+
+    Date dob;
+
+    String address;
 }
