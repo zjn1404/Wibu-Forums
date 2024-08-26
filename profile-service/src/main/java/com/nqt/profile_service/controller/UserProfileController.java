@@ -1,6 +1,5 @@
 package com.nqt.profile_service.controller;
 
-import com.nqt.profile_service.dto.request.UserProfileRequest;
 import com.nqt.profile_service.dto.response.ApiResponse;
 import com.nqt.profile_service.dto.response.UserProfileResponse;
 import com.nqt.profile_service.service.userprofile.UserProfileService;
@@ -16,16 +15,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserProfileController {
 
     UserProfileService userProfileService;
-
-    @PostMapping
-    public ApiResponse<UserProfileResponse> createUserProfile(@RequestBody UserProfileRequest request) {
-        return new ApiResponse<>(userProfileService.createUserProfile(request));
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse<UserProfileResponse> updateUserProfile(@PathVariable String id, @RequestBody UserProfileRequest request) {
-        return new ApiResponse<>(userProfileService.updateUserProfile(id, request));
-    }
 
     @GetMapping("/{id}")
     public ApiResponse<UserProfileResponse> getUserProfile(@PathVariable String id) {

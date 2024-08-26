@@ -1,16 +1,16 @@
-package com.nqt.identity_service.dto.request;
+package com.nqt.profile_service.dto.request;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
-@Setter
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserProfileCreationRequest {
-    String userId;
+public class UserProfileUpdateRequest {
     String firstName;
     String lastName;
     Date dob;

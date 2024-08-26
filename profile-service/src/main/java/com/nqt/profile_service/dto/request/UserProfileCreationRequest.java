@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserProfileRequest {
+public class UserProfileCreationRequest {
     String userId;
     String firstName;
     String lastName;

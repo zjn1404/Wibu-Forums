@@ -1,13 +1,12 @@
 package com.nqt.identity_service.dto.request.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -24,4 +23,12 @@ public class UserUpdateRequest {
     String phoneNumber;
 
     Set<String> roles;
+
+    String firstName;
+
+    String lastName;
+
+    Date dob;
+
+    String address;
 }

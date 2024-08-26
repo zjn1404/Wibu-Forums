@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<?>> handleException() {
+    public ResponseEntity<ApiResponse<Object>> handleException() {
         ErrorCode uncategorizedError = ErrorCode.UNCATEGORIZED_EXCEPTION;
         return ResponseEntity.status(uncategorizedError.httpStatus)
                 .body(ApiResponse.builder()
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<ApiResponse<?>> handleAppException(AppException appException) {
+    public ResponseEntity<ApiResponse<Object>> handleAppException(AppException appException) {
         return ResponseEntity.status(appException.getErrorCode().httpStatus)
                         .body(ApiResponse.builder()
                         .code(appException.getErrorCode().code)
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException() {
+    public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException() {
         ErrorCode unauthorizedError = ErrorCode.UNAUTHORIZED;
         return ResponseEntity.status(unauthorizedError.httpStatus)
                 .body(ApiResponse.builder()
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
         try {
