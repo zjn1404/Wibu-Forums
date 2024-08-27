@@ -30,7 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            CustomerJwtDecoder jwtDecoder,
+            CustomJwtDecoder jwtDecoder,
             AfterBearerTokenAuthenticationFilterExceptionHandler exceptionHandler)
             throws Exception {
 

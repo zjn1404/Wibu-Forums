@@ -1,5 +1,6 @@
 package com.nqt.identity_service.repository.profileservice;
 
+import com.nqt.identity_service.configuration.AuthenticationRequestInterceptor;
 import com.nqt.identity_service.dto.request.userprofile.UserProfileCreationRequest;
 import com.nqt.identity_service.dto.request.userprofile.UserProfileUpdateRequest;
 import com.nqt.identity_service.dto.response.ApiResponse;
@@ -8,7 +9,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "profile-service", url = "${app.services.profile}")
+@FeignClient(name = "profile-service", url = "${app.services.profile}",
+        configuration = {AuthenticationRequestInterceptor.class})
 public interface ProfileClient {
 
     @PostMapping(value = "/internal/users", produces = MediaType.APPLICATION_JSON_VALUE)
