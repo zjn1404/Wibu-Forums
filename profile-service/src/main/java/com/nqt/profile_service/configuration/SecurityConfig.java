@@ -17,12 +17,9 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final String[] PUBLIC_POST_ENDPOINTS = {
-            "/internal/users"
-    };
+    private static final String[] PUBLIC_POST_ENDPOINTS = {"/internal/users"};
 
-    private static final String[] PUBLIC_GET_ENDPOINTS = {
-    };
+    private static final String[] PUBLIC_GET_ENDPOINTS = {};
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -33,23 +30,17 @@ public class SecurityConfig {
 
         http.addFilterBefore(exceptionHandler, LogoutFilter.class);
 
-        http.authorizeHttpRequests(
-                requests -> requests
-                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
-        );
+        http.authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
+                .permitAll()
+                .anyRequest()
+                .authenticated());
 
         http.oauth2ResourceServer(configurer -> configurer
-                .jwt(jwtConfigurer -> jwtConfigurer
-                        .decoder(jwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-        );
-
+                .jwt(jwtConfigurer ->
+                        jwtConfigurer.decoder(jwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
         http.csrf(AbstractHttpConfigurer::disable);
 

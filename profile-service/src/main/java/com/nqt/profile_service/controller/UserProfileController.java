@@ -1,15 +1,17 @@
 package com.nqt.profile_service.controller;
 
-import com.nqt.profile_service.dto.response.ApiResponse;
-import com.nqt.profile_service.dto.response.UserProfileResponse;
-import com.nqt.profile_service.service.userprofile.UserProfileService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.nqt.profile_service.dto.response.ApiResponse;
+import com.nqt.profile_service.dto.response.UserProfileResponse;
+import com.nqt.profile_service.service.userprofile.UserProfileService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequestMapping("/users")

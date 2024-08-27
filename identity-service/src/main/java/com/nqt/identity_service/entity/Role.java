@@ -1,10 +1,11 @@
 package com.nqt.identity_service.entity;
 
+import java.util.Set;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -22,12 +23,15 @@ public class Role {
 
     String description;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH
-    })
-    @JoinTable(name = "role_permission",
-    joinColumns = {@JoinColumn(name = "role_name")},
-    inverseJoinColumns = {@JoinColumn(name = "permission_name")})
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                CascadeType.PERSIST, CascadeType.MERGE,
+                CascadeType.DETACH, CascadeType.REFRESH
+            })
+    @JoinTable(
+            name = "role_permission",
+            joinColumns = {@JoinColumn(name = "role_name")},
+            inverseJoinColumns = {@JoinColumn(name = "permission_name")})
     Set<Permission> permissions;
 }

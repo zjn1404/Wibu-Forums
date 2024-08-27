@@ -1,10 +1,10 @@
 package com.nqt.identity_service.service.user;
 
+import java.util.List;
+
 import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserUpdateRequest;
 import com.nqt.identity_service.dto.response.UserResponse;
-
-import java.util.List;
 
 public interface UserService {
 

@@ -1,8 +1,17 @@
 package com.nqt.identity_service.service.user;
 
-import com.nqt.identity_service.dto.request.userprofile.UserProfileCreationRequest;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserUpdateRequest;
+import com.nqt.identity_service.dto.request.userprofile.UserProfileCreationRequest;
 import com.nqt.identity_service.dto.request.userprofile.UserProfileUpdateRequest;
 import com.nqt.identity_service.dto.response.UserResponse;
 import com.nqt.identity_service.entity.Role;
@@ -15,24 +24,17 @@ import com.nqt.identity_service.repository.RoleRepository;
 import com.nqt.identity_service.repository.UserRepository;
 import com.nqt.identity_service.repository.profileservice.ProfileClient;
 import com.nqt.identity_service.utils.Utils;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserServiceImp implements UserService{
+public class UserServiceImp implements UserService {
 
     UserRepository userRepository;
     RoleRepository roleRepository;
@@ -45,8 +47,8 @@ public class UserServiceImp implements UserService{
 
     @Override
     public UserResponse createUser(UserCreationRequest request) {
-        if (userRepository.existsByUsernameOrEmailOrPhoneNumber(request.getUsername(), request.getEmail(),
-                request.getPhoneNumber())) {
+        if (userRepository.existsByUsernameOrEmailOrPhoneNumber(
+                request.getUsername(), request.getEmail(), request.getPhoneNumber())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
@@ -95,14 +97,15 @@ public class UserServiceImp implements UserService{
 
     @Override
     public UserResponse getUserById(String userId) {
-        return userMapper.toUserResponse(userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        return userMapper.toUserResponse(
+                userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     @Override
     public UserResponse getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName())
+        User user = userRepository
+                .findByUsername(authentication.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);

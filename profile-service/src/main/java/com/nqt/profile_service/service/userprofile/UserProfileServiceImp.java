@@ -1,5 +1,9 @@
 package com.nqt.profile_service.service.userprofile;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.nqt.profile_service.dto.request.UserProfileCreationRequest;
 import com.nqt.profile_service.dto.request.UserProfileUpdateRequest;
 import com.nqt.profile_service.dto.response.UserProfileResponse;
@@ -8,17 +12,15 @@ import com.nqt.profile_service.exception.AppException;
 import com.nqt.profile_service.exception.ErrorCode;
 import com.nqt.profile_service.mapper.UserProfileMapper;
 import com.nqt.profile_service.repository.UserProfileRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserProfileServiceImp implements UserProfileService{
+public class UserProfileServiceImp implements UserProfileService {
 
     UserProfileRepository userProfileRepository;
 
@@ -33,7 +35,8 @@ public class UserProfileServiceImp implements UserProfileService{
 
     @Override
     public UserProfileResponse updateUserProfile(String id, UserProfileUpdateRequest request) {
-        UserProfile userProfile = userProfileRepository.findById(id)
+        UserProfile userProfile = userProfileRepository
+                .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_PROFILE_NOT_FOUND));
 
         userProfileMapper.updateUserProfile(userProfile, request);
@@ -42,7 +45,8 @@ public class UserProfileServiceImp implements UserProfileService{
 
     @Override
     public UserProfileResponse updateUserProfileByUserId(String userId, UserProfileUpdateRequest request) {
-        UserProfile userProfile = userProfileRepository.findByUserId(userId)
+        UserProfile userProfile = userProfileRepository
+                .findByUserId(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_PROFILE_NOT_FOUND));
 
         userProfileMapper.updateUserProfile(userProfile, request);
@@ -51,13 +55,15 @@ public class UserProfileServiceImp implements UserProfileService{
 
     @Override
     public UserProfileResponse getUserProfileById(String id) {
-        return userProfileMapper.toUserProfileResponse(userProfileRepository.findById(id)
+        return userProfileMapper.toUserProfileResponse(userProfileRepository
+                .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_PROFILE_NOT_FOUND)));
     }
 
     @Override
     public List<UserProfileResponse> getAllProfiles() {
         return userProfileRepository.findAll().stream()
-                .map(userProfileMapper::toUserProfileResponse).toList();
+                .map(userProfileMapper::toUserProfileResponse)
+                .toList();
     }
 }

@@ -1,19 +1,22 @@
 package com.nqt.identity_service.controller;
 
-import com.nqt.identity_service.dto.request.PermissionRequest;
-import com.nqt.identity_service.dto.response.ApiResponse;
-import com.nqt.identity_service.dto.response.PermissionResponse;
-import com.nqt.identity_service.service.permission.PermissionService;
+import java.util.List;
+
 import jakarta.validation.Valid;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.nqt.identity_service.dto.request.PermissionRequest;
+import com.nqt.identity_service.dto.response.ApiResponse;
+import com.nqt.identity_service.dto.response.PermissionResponse;
+import com.nqt.identity_service.service.permission.PermissionService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
 @RestController
 @RequestMapping("/permissions")

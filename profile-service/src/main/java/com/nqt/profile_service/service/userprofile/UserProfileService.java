@@ -1,10 +1,10 @@
 package com.nqt.profile_service.service.userprofile;
 
+import java.util.List;
+
 import com.nqt.profile_service.dto.request.UserProfileCreationRequest;
 import com.nqt.profile_service.dto.request.UserProfileUpdateRequest;
 import com.nqt.profile_service.dto.response.UserProfileResponse;
-
-import java.util.List;
 
 public interface UserProfileService {
 

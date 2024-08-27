@@ -1,5 +1,11 @@
 package com.nqt.identity_service.service.role;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.stereotype.Service;
+
 import com.nqt.identity_service.dto.request.RoleRequest;
 import com.nqt.identity_service.dto.request.RoleUpdateRequest;
 import com.nqt.identity_service.dto.response.RoleResponse;
@@ -10,19 +16,15 @@ import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.mapper.RoleMapper;
 import com.nqt.identity_service.repository.PermissionRepository;
 import com.nqt.identity_service.repository.RoleRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class RoleServiceImp implements RoleService{
+public class RoleServiceImp implements RoleService {
 
     RoleRepository roleRepository;
     PermissionRepository permissionRepository;
@@ -47,8 +49,7 @@ public class RoleServiceImp implements RoleService{
 
     @Override
     public RoleResponse updateRole(String name, RoleUpdateRequest request) {
-        Role role = roleRepository.findById(name)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+        Role role = roleRepository.findById(name).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
 
         roleMapper.updateRole(role, request);
 
@@ -62,8 +63,8 @@ public class RoleServiceImp implements RoleService{
 
     @Override
     public RoleResponse getRoleByName(String name) {
-        return roleMapper.toRoleResponse(roleRepository.findById(name)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
+        return roleMapper.toRoleResponse(
+                roleRepository.findById(name).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
     }
 
     @Override

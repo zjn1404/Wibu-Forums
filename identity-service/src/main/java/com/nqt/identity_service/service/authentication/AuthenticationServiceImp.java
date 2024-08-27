@@ -1,5 +1,19 @@
 package com.nqt.identity_service.service.authentication;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.StringJoiner;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -14,24 +28,12 @@ import com.nqt.identity_service.exception.AppException;
 import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.repository.InvalidatedTokenRepository;
 import com.nqt.identity_service.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -63,7 +65,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
 
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository
+                .findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -83,12 +86,13 @@ public class AuthenticationServiceImp implements AuthenticationService {
             Date exp = token.getJWTClaimsSet().getExpirationTime();
 
             invalidatedTokenRepository.save(InvalidatedToken.builder()
-                            .acId(acId)
-                            .rfId(id)
-                            .expiryTime(exp)
-                            .build());
+                    .acId(acId)
+                    .rfId(id)
+                    .expiryTime(exp)
+                    .build());
 
-            return buildAuthenticationResponse(userRepository.findByUsername(token.getJWTClaimsSet().getSubject())
+            return buildAuthenticationResponse(userRepository
+                    .findByUsername(token.getJWTClaimsSet().getSubject())
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
         } catch (Exception e) {
             throw new AppException(ErrorCode.INVALID_TOKEN);
@@ -105,15 +109,14 @@ public class AuthenticationServiceImp implements AuthenticationService {
             isValid = false;
         }
 
-        return IntrospectResponse.builder()
-                .valid(isValid)
-                .build();
+        return IntrospectResponse.builder().valid(isValid).build();
     }
 
     @Override
     public void changePassword(ChangePasswordRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName())
+        User user = userRepository
+                .findByUsername(authentication.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
@@ -139,10 +142,10 @@ public class AuthenticationServiceImp implements AuthenticationService {
             exp = new Date(exp.getTime() + (refreshableDuration - validDuration) * 1000);
 
             invalidatedTokenRepository.save(InvalidatedToken.builder()
-                            .acId(acId)
-                            .rfId(rfId)
-                            .expiryTime(exp)
-                            .build());
+                    .acId(acId)
+                    .rfId(rfId)
+                    .expiryTime(exp)
+                    .build());
 
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -160,7 +163,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 .build();
     }
 
-    private String generateToken(User user, String id, String otherId, String signerKey, long duration){
+    private String generateToken(User user, String id, String otherId, String signerKey, long duration) {
 
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet claimsSet;
@@ -211,14 +214,12 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     private String buildScope(User user) {
         StringJoiner joiner = new StringJoiner(" ");
-        user.getRoles().forEach(
-                role -> {
-                    joiner.add("ROLE_" + role.getName());
-                    if (!CollectionUtils.isEmpty(role.getPermissions())) {
-                        role.getPermissions().forEach(permission -> joiner.add(permission.getName()));
-                    }
-                }
-        );
+        user.getRoles().forEach(role -> {
+            joiner.add("ROLE_" + role.getName());
+            if (!CollectionUtils.isEmpty(role.getPermissions())) {
+                role.getPermissions().forEach(permission -> joiner.add(permission.getName()));
+            }
+        });
         return joiner.toString();
     }
 

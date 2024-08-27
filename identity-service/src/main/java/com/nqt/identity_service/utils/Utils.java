@@ -8,6 +8,5 @@ public class Utils {
         return String.format("%s%s", user.getUsername(), user.getPhoneNumber());
     }
 
-    private Utils(){}
-
+    private Utils() {}
 }

@@ -1,19 +1,21 @@
 package com.nqt.identity_service.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.nqt.identity_service.dto.request.RoleRequest;
 import com.nqt.identity_service.dto.request.RoleUpdateRequest;
 import com.nqt.identity_service.dto.response.ApiResponse;
 import com.nqt.identity_service.dto.response.RoleResponse;
 import com.nqt.identity_service.service.role.RoleService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/roles")
@@ -35,7 +37,8 @@ public class RoleController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{name}")
-    public ApiResponse<RoleResponse> updateRole(@PathVariable("name") String name, @RequestBody RoleUpdateRequest roleRequest) {
+    public ApiResponse<RoleResponse> updateRole(
+            @PathVariable("name") String name, @RequestBody RoleUpdateRequest roleRequest) {
         return new ApiResponse<>(roleService.updateRole(name, roleRequest));
     }
 

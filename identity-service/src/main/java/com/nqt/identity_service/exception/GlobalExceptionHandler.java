@@ -1,11 +1,12 @@
 package com.nqt.identity_service.exception;
 
-import com.nqt.identity_service.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.nqt.identity_service.dto.response.ApiResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiResponse<Object>> handleAppException(AppException appException) {
         return ResponseEntity.status(appException.getErrorCode().httpStatus)
-                        .body(ApiResponse.builder()
+                .body(ApiResponse.builder()
                         .code(appException.getErrorCode().code)
                         .message(appException.getMessage())
                         .build());
@@ -40,7 +41,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException exception) {
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
         try {

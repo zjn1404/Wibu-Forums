@@ -1,9 +1,9 @@
 package com.nqt.identity_service.service.permission;
 
+import java.util.List;
+
 import com.nqt.identity_service.dto.request.PermissionRequest;
 import com.nqt.identity_service.dto.response.PermissionResponse;
-
-import java.util.List;
 
 public interface PermissionService {
 
@@ -14,5 +14,4 @@ public interface PermissionService {
     List<PermissionResponse> getAllPermissions();
 
     void deletePermissionByName(String name);
-
 }

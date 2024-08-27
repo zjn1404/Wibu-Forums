@@ -1,9 +1,9 @@
 package com.nqt.identity_service.dto.request.userprofile;
 
+import java.util.Date;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Setter
 @Getter

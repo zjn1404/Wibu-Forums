@@ -1,20 +1,23 @@
 package com.nqt.identity_service.controller;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserUpdateRequest;
 import com.nqt.identity_service.dto.response.ApiResponse;
 import com.nqt.identity_service.dto.response.UserResponse;
 import com.nqt.identity_service.service.user.UserService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -33,7 +36,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<UserResponse> updateUser(@PathVariable("id") String userId, @RequestBody @Valid UserUpdateRequest request) {
+    public ApiResponse<UserResponse> updateUser(
+            @PathVariable("id") String userId, @RequestBody @Valid UserUpdateRequest request) {
         return new ApiResponse<>(userService.updateUser(userId, request));
     }
 
@@ -60,5 +64,4 @@ public class UserController {
 
         return new ApiResponse<>(deleteSuccessMessage);
     }
-
 }
