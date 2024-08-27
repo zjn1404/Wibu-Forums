@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_POST_ENDPOINTS = {
-      "/users", "/auth/token", "/auth/refresh", "/auth/change-password", "/auth/logout",
+      "/users", "/auth/token", "/auth/refresh", "/auth/change-password", "/auth/logout", "/auth/introspect"
     };
 
     private static final String[] PUBLIC_GET_ENPOINTS = {

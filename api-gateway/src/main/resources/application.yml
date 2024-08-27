@@ -20,3 +20,9 @@ spring:
             - Path=${app.api-prefix}/profile/users/**
           filters:
             - StripPrefix=1
+
+code:
+  unauthenticated: 3001
+
+message:
+  unauthenticated: "Authentication Failed"

@@ -47,7 +47,6 @@ public class AuthenticationController {
         return new ApiResponse<>(authenticationService.refreshToken(authenticationRequest));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/introspect")
     public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest authenticationRequest) {
         return new ApiResponse<>(authenticationService.introspect(authenticationRequest));
