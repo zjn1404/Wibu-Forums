@@ -1,8 +1,8 @@
-package com.nqt.identity_service.configuration;
+package com.nqt.profile_service.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nqt.identity_service.dto.response.ApiResponse;
-import com.nqt.identity_service.exception.ErrorCode;
+import com.nqt.profile_service.dto.response.ApiResponse;
+import com.nqt.profile_service.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;

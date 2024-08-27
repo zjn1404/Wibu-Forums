@@ -4,6 +4,8 @@ import com.nqt.profile_service.dto.request.UserProfileCreationRequest;
 import com.nqt.profile_service.dto.request.UserProfileUpdateRequest;
 import com.nqt.profile_service.dto.response.UserProfileResponse;
 
+import java.util.List;
+
 public interface UserProfileService {
 
     UserProfileResponse createUserProfile(UserProfileCreationRequest request);
@@ -14,4 +16,5 @@ public interface UserProfileService {
 
     UserProfileResponse getUserProfileById(String userId);
 
+    List<UserProfileResponse> getAllProfiles();
 }

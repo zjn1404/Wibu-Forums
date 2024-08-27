@@ -1,8 +1,8 @@
-package com.nqt.identity_service.configuration;
+package com.nqt.profile_service.configuration;
 
 import com.nimbusds.jwt.SignedJWT;
-import com.nqt.identity_service.exception.AppException;
-import com.nqt.identity_service.exception.ErrorCode;
+import com.nqt.profile_service.exception.AppException;
+import com.nqt.profile_service.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

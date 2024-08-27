@@ -20,6 +20,11 @@ public enum ErrorCode {
     USER_PROFILE_EXISTED(25001, HttpStatus.BAD_REQUEST, "User profile already existed"),
 
     // Other (2xxx)
+    // Unauthenticated error (3xxx)
+    UNAUTHENTICATED(3001, HttpStatus.UNAUTHORIZED, "Authentication Failed"),
+    INVALID_TOKEN(3002, HttpStatus.UNAUTHORIZED, "Invalid Token"),
+    // Unauthorized error (4xxx)
+    UNAUTHORIZED(4001, HttpStatus.FORBIDDEN, "Don't have permission"),
 
     // Not Found error (5xxx)
     USER_PROFILE_NOT_FOUND(5001, HttpStatus.BAD_REQUEST, "User profile not found"),

@@ -2,6 +2,7 @@ package com.nqt.profile_service.exception;
 
 import com.nqt.profile_service.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -30,4 +31,13 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException() {
+        ErrorCode unauthorizedError = ErrorCode.UNAUTHORIZED;
+        return ResponseEntity.status(unauthorizedError.httpStatus)
+                .body(ApiResponse.builder()
+                        .code(unauthorizedError.code)
+                        .message(unauthorizedError.message)
+                        .build());
+    }
 }

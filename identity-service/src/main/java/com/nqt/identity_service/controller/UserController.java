@@ -27,7 +27,7 @@ public class UserController {
     @Value("${message.controller.user.delete}")
     String deleteSuccessMessage;
 
-    @PostMapping
+    @PostMapping("/registration")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return new ApiResponse<>(userService.createUser(request));
     }
