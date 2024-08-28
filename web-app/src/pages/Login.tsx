@@ -32,6 +32,11 @@ export const Login: React.FC = () => {
     event.preventDefault();
 
     try {
+      if (username == null || password == null || username.length == 0 || password.length == 0) {
+        setSnackBarMessage("Username and password are required");
+        setSnackBarOpen(true);
+        return;
+      }
       const response = await logIn(username, password);
       console.log("Response body:", response.data);
       navigate("/");
@@ -87,6 +92,7 @@ export const Login: React.FC = () => {
                 placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
               />
             </div>
             <div className="mb-3">
@@ -100,6 +106,7 @@ export const Login: React.FC = () => {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </div>
             <button type="submit" className="mt-3 btn btn-dark w-100">

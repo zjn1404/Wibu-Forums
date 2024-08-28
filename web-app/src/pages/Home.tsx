@@ -57,7 +57,7 @@ export const Home: React.FC = () => {
               <div className="card-body">
                 <h5 className="card-title">Profile</h5>
                 <p className="card-text">
-                  Name: {userDetails.username || 'N/A'}
+                  Username: {userDetails.username || 'N/A'}
                 </p>
                 <p className="card-text">
                   Email: {userDetails.email || 'N/A'}
