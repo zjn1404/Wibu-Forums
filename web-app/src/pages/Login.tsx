@@ -3,9 +3,24 @@ import { Link, useNavigate } from "react-router-dom";
 import { Snackbar, Alert } from "@mui/material";
 import { FaGoogle } from "react-icons/fa";
 import { isAuthenticated, logIn } from "../services/AuthenticationService";
+import { OAUTHCONFIG } from "../configurations/Configuration";
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  
+  const handleSignInWithGoogle = () => {
+    const callbackUrl = OAUTHCONFIG.redirectUri;
+    const authUrl = OAUTHCONFIG.authUri;
+    const googleClientId = OAUTHCONFIG.clientId;
+
+    const targetUrl = `${authUrl}?redirect_uri=${encodeURIComponent(
+      callbackUrl
+    )}&response_type=token&client_id=${googleClientId}&scope=openid%20email%20profile`;
+
+    console.log(targetUrl);
+
+    window.location.href = targetUrl;
+  };
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -17,11 +32,6 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
-
-  const handleGoogleLogin = () => {
-    console.log("Google login clicked");
-    //TODO: Implement Google login logic here
-  };
 
   const handleCloseSnackBar = (event?: any, reason?: any) => {
     if (reason === "clickaway") return;
@@ -67,12 +77,12 @@ export const Login: React.FC = () => {
 
       <div className="d-flex align-items-center justify-content-center vh-100 bg-dark">
         <div className="card p-4 shadow" style={{ width: "350px" }}>
-          <h3 className="card-title text-center mb-4">Sign In</h3>
+          <h3 className="card-title text-center mb-4">Log In</h3>
 
           {/* Google Login */}
           <button
             className="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center"
-            onClick={handleGoogleLogin}
+            onClick={handleSignInWithGoogle}
           >
             <FaGoogle className="me-2" /> Sign in with Google
           </button>
@@ -110,7 +120,7 @@ export const Login: React.FC = () => {
               />
             </div>
             <button type="submit" className="mt-3 btn btn-dark w-100">
-              Sign In
+              Log In
             </button>
           </form>
 
