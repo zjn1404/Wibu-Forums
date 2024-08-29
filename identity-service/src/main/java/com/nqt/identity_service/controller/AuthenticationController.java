@@ -3,10 +3,7 @@ package com.nqt.identity_service.controller;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.nqt.identity_service.dto.request.security.*;
 import com.nqt.identity_service.dto.response.ApiResponse;
@@ -42,6 +39,13 @@ public class AuthenticationController {
     @PostMapping("/token")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
         return new ApiResponse<>(authenticationService.authenticate(authenticationRequest));
+    }
+
+    @PostMapping("/outbound/authentication")
+    public ApiResponse<AuthenticationResponse> outboundAuthentication(@RequestParam("code") String code) {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationService.outboundAuthenticate(code))
+                .build();
     }
 
     @PostMapping("/refresh")

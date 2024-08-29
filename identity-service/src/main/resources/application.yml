@@ -14,6 +14,14 @@ spring:
       ddl-auto: none
     show-sql: true
 
+outbound:
+  identity:
+    base_uri: "https://oauth2.googleapis.com"
+    client_id: "60486252610-3lu1b07uuf5h2sokpsdikejp53cf1qsb.apps.googleusercontent.com"
+    client_secret: "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"
+    redirect_uri: "http://localhost:3000/authenticate"
+    grant_type: "authorization_code"
+
 jwt:
   signerKey: "GF8bIi7ezOnrdsZvh1gt1sHc5E8KnJaybTf88q5GecpO4E6NhR0PENFaBM+ZEyVG"
   refreshSignerKey: "7+78pvfH7Pp4WK8py2tecwSfH+Cvt56WKuWNEDOmqsEaiDwjWh2wBI56+gTMMy9S"

@@ -32,11 +32,11 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     @NonFinal
     @Value("${code.unauthenticated}")
-    int codeUnauthenticated;
+    int unauthenticatedCode;
 
     @NonFinal
     @Value("${message.unauthenticated}")
-    String messageUnauthenticated;
+    String unauthenticatedMessage;
 
     @NonFinal
     String[] publicEndpoints = {
@@ -85,8 +85,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     private Mono<Void> unauthenticated(ServerHttpResponse response) {
         ApiResponse<?> apiResponse = ApiResponse.builder()
-                .code(codeUnauthenticated)
-                .message(messageUnauthenticated)
+                .code(unauthenticatedCode)
+                .message(unauthenticatedMessage)
                 .build();
 
         String body;

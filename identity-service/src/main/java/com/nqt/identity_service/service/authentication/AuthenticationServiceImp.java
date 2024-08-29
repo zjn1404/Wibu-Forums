@@ -19,8 +19,10 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.nqt.identity_service.dto.request.ExchangeTokenRequest;
 import com.nqt.identity_service.dto.request.security.*;
 import com.nqt.identity_service.dto.response.AuthenticationResponse;
+import com.nqt.identity_service.dto.response.ExchangeTokenResponse;
 import com.nqt.identity_service.dto.response.IntrospectResponse;
 import com.nqt.identity_service.entity.InvalidatedToken;
 import com.nqt.identity_service.entity.User;
@@ -28,6 +30,7 @@ import com.nqt.identity_service.exception.AppException;
 import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.repository.InvalidatedTokenRepository;
 import com.nqt.identity_service.repository.UserRepository;
+import com.nqt.identity_service.repository.outboundidentity.OutBoundIdentityClient;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +60,25 @@ public class AuthenticationServiceImp implements AuthenticationService {
     @Value("${jwt.refreshable-duration}")
     long refreshableDuration;
 
+    @NonFinal
+    @Value("${outbound.identity.client_id}")
+    String clientId;
+
+    @NonFinal
+    @Value("${outbound.identity.client_secret}")
+    String clientSecret;
+
+    @NonFinal
+    @Value("${outbound.identity.redirect_uri}")
+    String redirectUri;
+
+    @NonFinal
+    @Value("${outbound.identity.grant_type}")
+    String grantType;
+
     InvalidatedTokenRepository invalidatedTokenRepository;
     UserRepository userRepository;
+    OutBoundIdentityClient outBoundIdentityClient;
 
     PasswordEncoder passwordEncoder;
 
@@ -74,6 +94,24 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
 
         return buildAuthenticationResponse(user);
+    }
+
+    @Override
+    public AuthenticationResponse outboundAuthenticate(String code) {
+        ExchangeTokenResponse exchangeTokenResponse =
+                outBoundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+                        .clientId(clientId)
+                        .clientSecret(clientSecret)
+                        .redirectUri(redirectUri)
+                        .grantType(grantType)
+                        .code(code)
+                        .build());
+
+        return AuthenticationResponse.builder()
+                .accessToken(exchangeTokenResponse.getAccessToken())
+                .refreshToken(exchangeTokenResponse.getRefreshToken())
+                .isSuccess(true)
+                .build();
     }
 
     @Override

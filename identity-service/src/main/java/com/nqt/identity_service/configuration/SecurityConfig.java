@@ -25,7 +25,8 @@ public class SecurityConfig {
         "/auth/refresh",
         "/auth/change-password",
         "/auth/logout",
-        "/auth/introspect"
+        "/auth/introspect",
+        "/auth/outbound/authentication"
     };
 
     private static final String[] PUBLIC_GET_ENDPOINTS = {"/users/{id}"};

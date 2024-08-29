@@ -8,6 +8,8 @@ public interface AuthenticationService {
 
     AuthenticationResponse authenticate(AuthenticationRequest request);
 
+    AuthenticationResponse outboundAuthenticate(String code);
+
     AuthenticationResponse refreshToken(RefreshTokenRequest request);
 
     IntrospectResponse introspect(IntrospectRequest request);

@@ -8,6 +8,8 @@ export default function Authenticate() {
   const [isLoggedin, setIsLoggedin] = useState(false);
 
   useEffect(() => {
+    console.log(window.location.href);
+
     const accessTokenRegex = /access_token=([^&]+)/;
     // const setRefreshTokenRegex = /refresh_token=([^&]+)/;
     const isMatchAT = window.location.href.match(accessTokenRegex);
