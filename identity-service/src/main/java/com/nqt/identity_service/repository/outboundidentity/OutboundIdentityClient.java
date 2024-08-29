@@ -10,7 +10,7 @@ import com.nqt.identity_service.dto.response.ExchangeTokenResponse;
 import feign.QueryMap;
 
 @FeignClient(name = "outbound-client", url = "${outbound.identity.base_uri}")
-public interface OutBoundIdentityClient {
+public interface OutboundIdentityClient {
     @PostMapping(
             value = "/token",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,

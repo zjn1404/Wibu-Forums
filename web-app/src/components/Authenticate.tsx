@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { setAccessToken, setRefreshToken } from "../services/LocalStorageService";
 import { Box, CircularProgress, Typography } from "@mui/material";
+import axios from "axios";
 
 export default function Authenticate() {
   const navigate = useNavigate();
@@ -10,19 +11,23 @@ export default function Authenticate() {
   useEffect(() => {
     console.log(window.location.href);
 
-    const accessTokenRegex = /access_token=([^&]+)/;
-    // const setRefreshTokenRegex = /refresh_token=([^&]+)/;
-    const isMatchAT = window.location.href.match(accessTokenRegex);
-    // const isMathFT = window.location.href.match(setRefreshTokenRegex);
+    const authCodeRegex = /code=([^&]+)/;
+    const isMatch = window.location.href.match(authCodeRegex);
 
-    if (isMatchAT /*&& isMathFT*/) {
-      const accessToken = isMatchAT[1];
-      // const refreshToken = isMathFT[1];
-      console.log("Token: ", accessToken);
+    if (isMatch) {
+      const authCode = isMatch[1];
+      
+      axios.post(`http://localhost:8888/api/identity/auth/outbound/authentication?code=${authCode}`)
+      .then(reponse => reponse.data)
+      .then(data => {
+        const accessToken = data.result.accessToken;
+        const refreshToken = data.result.refreshToken;
+        
+        setAccessToken(accessToken);
+        setRefreshToken(refreshToken);
+        setIsLoggedin(true);
+      })
 
-      setAccessToken(accessToken);
-      // setRefreshToken(refreshToken);
-      setIsLoggedin(true);
     }
   }, []);
 

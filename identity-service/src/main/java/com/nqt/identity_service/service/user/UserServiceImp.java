@@ -47,8 +47,12 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserResponse createUser(UserCreationRequest request) {
-        if (userRepository.existsByUsernameOrEmailOrPhoneNumber(
-                request.getUsername(), request.getEmail(), request.getPhoneNumber())) {
+        return userMapper.toUserResponse(createInternalUser(request));
+    }
+
+    @Override
+    public User createInternalUser(UserCreationRequest request) {
+        if (userRepository.existsByUsernameOrEmail(request.getUsername(), request.getEmail())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
@@ -67,7 +71,7 @@ public class UserServiceImp implements UserService {
         userCreationRequest.setUserId(user.getId());
         profileClient.createUserProfile(userCreationRequest);
 
-        return userMapper.toUserResponse(user);
+        return user;
     }
 
     @Override

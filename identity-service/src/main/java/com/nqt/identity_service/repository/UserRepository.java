@@ -9,7 +9,9 @@ import com.nqt.identity_service.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
-    boolean existsByUsernameOrEmailOrPhoneNumber(String username, String email, String phoneNumber);
+    boolean existsByUsernameOrEmail(String username, String email);
 
     Optional<User> findByUsername(String username);
+
+    Optional<User> findByEmail(String email);
 }

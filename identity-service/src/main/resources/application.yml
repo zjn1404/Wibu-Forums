@@ -17,8 +17,8 @@ spring:
 outbound:
   identity:
     base_uri: "https://oauth2.googleapis.com"
-    client_id: "60486252610-3lu1b07uuf5h2sokpsdikejp53cf1qsb.apps.googleusercontent.com"
-    client_secret: "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"
+    client_id: ${CLIENT_ID}
+    client_secret: ${CLIENT_SECRET}
     redirect_uri: "http://localhost:3000/authenticate"
     grant_type: "authorization_code"
 
@@ -51,5 +51,8 @@ init-info:
   phone-number: 1234567890
 
 app:
+  roles:
+    admin: ADMIN
+    user: USER
   services:
     profile: http://localhost:8081/profile

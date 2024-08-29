@@ -3,9 +3,7 @@ package com.nqt.identity_service.service.authentication;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -21,16 +19,20 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nqt.identity_service.dto.request.ExchangeTokenRequest;
 import com.nqt.identity_service.dto.request.security.*;
+import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.response.AuthenticationResponse;
 import com.nqt.identity_service.dto.response.ExchangeTokenResponse;
 import com.nqt.identity_service.dto.response.IntrospectResponse;
+import com.nqt.identity_service.dto.response.OutboundUserResponse;
 import com.nqt.identity_service.entity.InvalidatedToken;
 import com.nqt.identity_service.entity.User;
 import com.nqt.identity_service.exception.AppException;
 import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.repository.InvalidatedTokenRepository;
 import com.nqt.identity_service.repository.UserRepository;
-import com.nqt.identity_service.repository.outboundidentity.OutBoundIdentityClient;
+import com.nqt.identity_service.repository.outboundidentity.OutboundIdentityClient;
+import com.nqt.identity_service.repository.outboundidentity.OutboundUserClient;
+import com.nqt.identity_service.service.user.UserService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationServiceImp implements AuthenticationService {
+
+    @NonFinal
+    @Value("${app.roles.user}")
+    String userRole;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -78,7 +84,10 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     InvalidatedTokenRepository invalidatedTokenRepository;
     UserRepository userRepository;
-    OutBoundIdentityClient outBoundIdentityClient;
+    OutboundIdentityClient outBoundIdentityClient;
+    OutboundUserClient outboundUserClient;
+
+    UserService userService;
 
     PasswordEncoder passwordEncoder;
 
@@ -107,11 +116,20 @@ public class AuthenticationServiceImp implements AuthenticationService {
                         .code(code)
                         .build());
 
-        return AuthenticationResponse.builder()
-                .accessToken(exchangeTokenResponse.getAccessToken())
-                .refreshToken(exchangeTokenResponse.getRefreshToken())
-                .isSuccess(true)
-                .build();
+        OutboundUserResponse userInfo = outboundUserClient.getUserInfo("json", exchangeTokenResponse.getAccessToken());
+        log.info(userInfo.toString());
+        User user = userRepository
+                .findByEmail(userInfo.getEmail())
+                .orElseGet(() -> userService.createInternalUser(UserCreationRequest.builder()
+                        .email(userInfo.getEmail())
+                        .username(userInfo.getEmail())
+                        .firstName(userInfo.getFamilyName())
+                        .lastName(userInfo.getGivenName())
+                        .password(UUID.randomUUID().toString())
+                        .roles(new HashSet<>(List.of(userRole)))
+                        .build()));
+
+        return buildAuthenticationResponse(user);
     }
 
     @Override
