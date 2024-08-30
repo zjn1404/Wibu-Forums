@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -117,7 +118,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                         .build());
 
         OutboundUserResponse userInfo = outboundUserClient.getUserInfo("json", exchangeTokenResponse.getAccessToken());
-        log.info(userInfo.toString());
+
         User user = userRepository
                 .findByEmail(userInfo.getEmail())
                 .orElseGet(() -> userService.createInternalUser(UserCreationRequest.builder()
@@ -166,6 +167,21 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
 
         return IntrospectResponse.builder().valid(isValid).build();
+    }
+
+    @Override
+    public void createPassword(PasswordCreationRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository
+                .findByUsername(authentication.getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (StringUtils.hasText(user.getPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_EXISTED);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
     }
 
     @Override

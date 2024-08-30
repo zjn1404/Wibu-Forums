@@ -12,7 +12,7 @@ export default function Authenticate() {
     console.log(window.location.href);
 
     const authCodeRegex = /code=([^&]+)/;
-    const isMatch = window.location.href.match(authCodeRegex);
+    const isMatch = RegExp(authCodeRegex).exec(window.location.href);
 
     if (isMatch) {
       const authCode = isMatch[1];
@@ -38,8 +38,7 @@ export default function Authenticate() {
   }, [isLoggedin, navigate]);
 
   return (
-    <>
-      <Box
+    <Box
         sx={{
           display: "flex",
           flexDirection : "column",
@@ -49,9 +48,8 @@ export default function Authenticate() {
           height: "100vh",
         }}
       >
-        <CircularProgress></CircularProgress>
-        <Typography>Authenticating...</Typography>
+        <CircularProgress sx={{ color: '#1b1e21' }}></CircularProgress>
+        <Typography sx={{ color: '#1b1e21' }}>Authenticating...</Typography>
       </Box>
-    </>
   );
 }

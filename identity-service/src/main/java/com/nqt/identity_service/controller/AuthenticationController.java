@@ -27,6 +27,10 @@ public class AuthenticationController {
     String changePasswordSuccessMessage;
 
     @NonFinal
+    @Value("${message.controller.authentication.create-password}")
+    String createPasswordSuccessMessage;
+
+    @NonFinal
     @Value("${message.controller.authentication.logout}")
     String logoutSuccessMessage;
 
@@ -58,14 +62,18 @@ public class AuthenticationController {
         return new ApiResponse<>(authenticationService.introspect(authenticationRequest));
     }
 
+    @PostMapping("/create-password")
+    public ApiResponse<Object> createPassword(@RequestBody @Valid PasswordCreationRequest request) {
+        authenticationService.createPassword(request);
+
+        return ApiResponse.builder().message(createPasswordSuccessMessage).build();
+    }
+
     @PostMapping("/change-password")
     public ApiResponse<Object> changePassword(@RequestBody @Valid ChangePasswordRequest authenticationRequest) {
         authenticationService.changePassword(authenticationRequest);
 
-        return ApiResponse.builder()
-                .code(codeSuccess)
-                .message(changePasswordSuccessMessage)
-                .build();
+        return ApiResponse.builder().message(changePasswordSuccessMessage).build();
     }
 
     @PostMapping("/logout")

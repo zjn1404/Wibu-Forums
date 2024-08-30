@@ -14,6 +14,8 @@ public interface AuthenticationService {
 
     IntrospectResponse introspect(IntrospectRequest request);
 
+    void createPassword(PasswordCreationRequest request);
+
     void changePassword(ChangePasswordRequest request);
 
     void logout(LogoutRequest request);

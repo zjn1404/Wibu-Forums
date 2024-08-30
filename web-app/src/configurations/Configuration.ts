@@ -12,3 +12,7 @@ export const OAUTHCONFIG = {
   redirectUri: "http://localhost:3000/authenticate",
   authUri: "https://accounts.google.com/o/oauth2/auth"
 };
+
+export const CODE = {
+  SUCCESS: 1000
+};
