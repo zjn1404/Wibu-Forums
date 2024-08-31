@@ -56,19 +56,27 @@ public class UserServiceImp implements UserService {
     @Override
     @Transactional
     public UserResponse createUser(UserCreationRequest request) {
-        return userMapper.toUserResponse(createInternalUser(request));
+        User user = createInternalUser(request);
+        verifyCodeService.sendVerifyMail(user);
+        return userMapper.toUserResponse(user);
     }
 
     @Override
     @Transactional
     public User createInternalUser(UserCreationRequest request) {
-        if (userRepository.existsByUsernameOrEmail(request.getUsername(), request.getEmail())) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
         User user = userMapper.toUser(request);
         user.setId(utils.buildUserId(user));
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        if (StringUtils.hasText(request.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
 
         if (!Objects.isNull(request.getRoles())) {
             List<Role> roles = roleRepository.findAllById(request.getRoles());
@@ -80,8 +88,6 @@ public class UserServiceImp implements UserService {
         UserProfileCreationRequest userCreationRequest = userProfileMapper.toUserProfileCreationRequest(request);
         userCreationRequest.setUserId(user.getId());
         profileClient.createUserProfile(userCreationRequest);
-
-        verifyCodeService.sendVerifyMail(user);
 
         return user;
     }

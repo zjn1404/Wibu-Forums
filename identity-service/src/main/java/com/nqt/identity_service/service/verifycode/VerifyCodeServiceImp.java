@@ -35,7 +35,7 @@ public class VerifyCodeServiceImp implements VerifyCodeService {
     KafkaTemplate<String, NotificationEvent> kafkaTemplate;
 
     @Override
-    public void verify(String code, String userId) {
+    public boolean verify(String code, String userId) {
         VerifyCode verifyCode = verifyCodeRepository
                 .findByVerifyCodeAndUserId(code, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.VERIFY_CODE_INCORRECT));
@@ -46,10 +46,12 @@ public class VerifyCodeServiceImp implements VerifyCodeService {
             verifyCodeRepository.deleteById(verifyCode.getVerifyCode());
             sendVerifyMail(user);
 
-            throw new AppException(ErrorCode.VERIFY_CODE_EXPIRED);
+            return false;
         }
 
         verifyCodeRepository.delete(verifyCode);
+
+        return true;
     }
 
     @Override

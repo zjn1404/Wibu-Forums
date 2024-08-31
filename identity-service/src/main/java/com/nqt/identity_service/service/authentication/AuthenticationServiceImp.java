@@ -133,7 +133,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
                         .username(userInfo.getEmail())
                         .firstName(userInfo.getFamilyName())
                         .lastName(userInfo.getGivenName())
-                        .password(UUID.randomUUID().toString())
                         .roles(new HashSet<>(List.of(userRole)))
                         .build()));
 

@@ -124,7 +124,7 @@ export const Login: React.FC = () => {
 
           {/* Create Account Link */}
           <div className="mt-4 text-center">
-            <Link to="/sign-up" className="text-dark">
+            <Link to="/register" className="text-dark">
               Create new account
             </Link>
           </div>

@@ -4,6 +4,8 @@ export const CONFIG = {
 
 export const API = {
   LOGIN: "/identity/auth/token",
+  REGISTER: "/identity/users/registration",
+  LOGOUT: "/identity/auth/logout",
   MY_INFO: "/identity/users/my-info",
 };
 
@@ -14,5 +16,6 @@ export const OAUTHCONFIG = {
 };
 
 export const CODE = {
-  SUCCESS: 1000
+  SUCCESS: 1000,
+  VERIFICATION_CODE_EXPIRED: 2801
 };

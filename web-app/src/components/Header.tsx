@@ -7,8 +7,8 @@ import { logOut } from "../services/AuthenticationService";
 export const Header: React.FC<{
   user?: any;
 }> = (props) => {
-  const handleLogout = (even: any) => {
-    logOut();
+  const handleLogout = async (even: any) => {
+    await logOut();
     window.location.href = "/login";
   };
 

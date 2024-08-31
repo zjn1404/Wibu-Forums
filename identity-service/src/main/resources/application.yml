@@ -7,6 +7,10 @@ api-gateway:
   port: 8888
   prefix: /api
 
+client:
+  verification-success-page: http://localhost:3000/register-success
+  verification-code-expired-page: http://localhost:3000/verification-code-expired
+
 spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/wibuforums_identity"
