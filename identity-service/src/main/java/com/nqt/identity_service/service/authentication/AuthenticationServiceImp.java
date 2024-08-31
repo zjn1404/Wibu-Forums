@@ -31,6 +31,7 @@ import com.nqt.identity_service.exception.AppException;
 import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.repository.InvalidatedTokenRepository;
 import com.nqt.identity_service.repository.UserRepository;
+import com.nqt.identity_service.repository.VerifyCodeRepository;
 import com.nqt.identity_service.repository.outboundidentity.OutboundIdentityClient;
 import com.nqt.identity_service.repository.outboundidentity.OutboundUserClient;
 import com.nqt.identity_service.service.user.UserService;
@@ -85,6 +86,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     InvalidatedTokenRepository invalidatedTokenRepository;
     UserRepository userRepository;
+    VerifyCodeRepository verifyCodeRepository;
+
     OutboundIdentityClient outBoundIdentityClient;
     OutboundUserClient outboundUserClient;
 
@@ -98,6 +101,10 @@ public class AuthenticationServiceImp implements AuthenticationService {
         User user = userRepository
                 .findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (verifyCodeRepository.existsByUserId(user.getId())) {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_VERIFIED);
+        }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.PASSWORD_INCORRECT);

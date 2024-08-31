@@ -1,4 +1,4 @@
-package com.nqt.identity_service.configuration;
+package com.nqt.notification_service.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,8 +7,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,24 +17,14 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final String[] PUBLIC_POST_ENDPOINTS = {
-        "/users/registration",
-        "/auth/token",
-        "/auth/refresh",
-        "/auth/change-password",
-        "/auth/logout",
-        "/auth/introspect",
-        "/auth/outbound/authentication",
-    };
+    private static final String[] PUBLIC_POST_ENDPOINTS = {"/email/send"};
 
-    private static final String[] PUBLIC_GET_ENDPOINTS = {
-        "/users/{id}", "/verify/**",
-    };
+    private static final String[] PUBLIC_GET_ENDPOINTS = {};
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            CustomJwtDecoder jwtDecoder,
+            CustomerJwtDecoder jwtDecoder,
             AfterBearerTokenAuthenticationFilterExceptionHandler exceptionHandler)
             throws Exception {
 
@@ -68,10 +56,5 @@ public class SecurityConfig {
         converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
 
         return converter;
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

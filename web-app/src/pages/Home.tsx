@@ -15,14 +15,14 @@ export const Home: React.FC = () => {
     lastName: "",
     email: "",
     phoneNumber: "",
-    noPassword: true,
+    noPassword: ""
   });
 
   const [password, setPassword] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [snackType, setSnackType] = useState<"success" | "error">("error");
-  const [openModal, setOpenModal] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
 
   const handleCloseSnackBar = (event?: any, reason?: any) => {
     if (reason === "clickaway") return;

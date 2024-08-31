@@ -27,7 +27,7 @@ public enum ErrorCode {
     PERMISSION_EXISTED(2503, HttpStatus.BAD_REQUEST, "Permission Existed"),
     PASSWORD_EXISTED(2504, HttpStatus.BAD_REQUEST, "Password Existed"),
     // Other (28xx)
-    VERIFY_CODE_EXPIRED(2805, HttpStatus.BAD_REQUEST, "Verify Code Expired, New Code Has Been Sent"),
+    VERIFY_CODE_EXPIRED(2801, HttpStatus.BAD_REQUEST, "Verify Code Expired, New Code Has Been Sent"),
     // Unauthenticated error (3xxx)
     UNAUTHENTICATED(3001, HttpStatus.UNAUTHORIZED, "Authentication Failed"),
     INVALID_TOKEN(3002, HttpStatus.UNAUTHORIZED, "Invalid Token"),

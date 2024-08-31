@@ -40,7 +40,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     @NonFinal
     String[] publicEndpoints = {
-            "/identity/users/registration", "/identity/auth/.*"
+            "/identity/users/registration", "/identity/auth/.*", "/notification/email/send", "/identity/verify.*"
     };
 
     @NonFinal

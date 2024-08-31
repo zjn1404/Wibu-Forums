@@ -27,6 +27,8 @@ public class ApplicationInitConfig {
     UserRepository userRepository;
     RoleRepository roleRepository;
 
+    Utils utils;
+
     PasswordEncoder passwordEncoder;
 
     @Bean
@@ -49,7 +51,7 @@ public class ApplicationInitConfig {
                         .roles(new HashSet<>(List.of(role)))
                         .build();
 
-                user.setId(Utils.buildUserId(user));
+                user.setId(utils.buildUserId(user));
 
                 userRepository.save(user);
             }

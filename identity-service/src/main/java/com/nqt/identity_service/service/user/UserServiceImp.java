@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ import com.nqt.identity_service.mapper.UserProfileMapper;
 import com.nqt.identity_service.repository.RoleRepository;
 import com.nqt.identity_service.repository.UserRepository;
 import com.nqt.identity_service.repository.profileservice.ProfileClient;
+import com.nqt.identity_service.service.verifycode.VerifyCodeService;
 import com.nqt.identity_service.utils.Utils;
 
 import lombok.AccessLevel;
@@ -41,24 +44,30 @@ public class UserServiceImp implements UserService {
     RoleRepository roleRepository;
     ProfileClient profileClient;
 
+    VerifyCodeService verifyCodeService;
+
+    Utils utils;
+
     UserMapper userMapper;
     UserProfileMapper userProfileMapper;
 
     PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public UserResponse createUser(UserCreationRequest request) {
         return userMapper.toUserResponse(createInternalUser(request));
     }
 
     @Override
+    @Transactional
     public User createInternalUser(UserCreationRequest request) {
         if (userRepository.existsByUsernameOrEmail(request.getUsername(), request.getEmail())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         User user = userMapper.toUser(request);
-        user.setId(Utils.buildUserId(user));
+        user.setId(utils.buildUserId(user));
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         if (!Objects.isNull(request.getRoles())) {
@@ -71,6 +80,8 @@ public class UserServiceImp implements UserService {
         UserProfileCreationRequest userCreationRequest = userProfileMapper.toUserProfileCreationRequest(request);
         userCreationRequest.setUserId(user.getId());
         profileClient.createUserProfile(userCreationRequest);
+
+        verifyCodeService.sendVerifyMail(user);
 
         return user;
     }
@@ -124,7 +135,9 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUserById(String userId) {
+        verifyCodeService.deleteVerifyCode(userId);
         userRepository.deleteById(userId);
     }
 }

@@ -6,15 +6,18 @@
       <option name="ignoredModules">
         <list>
           <option value="identity-service" />
+          <option value="notification-service" />
         </list>
       </option>
       <option name="ignoredPackages">
         <list>
           <option value="commons-fileupload:commons-fileupload:1.5" />
+          <option value="commons-fileupload:commons-fileupload:1.5" />
         </list>
       </option>
       <option name="ignoredReasons">
         <list>
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
         </list>
       </option>

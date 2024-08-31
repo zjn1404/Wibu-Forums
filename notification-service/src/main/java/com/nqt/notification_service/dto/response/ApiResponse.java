@@ -1,4 +1,4 @@
-package com.nqt.identity_service.dto.response;
+package com.nqt.notification_service.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -17,11 +17,5 @@ public class ApiResponse<T> {
     int code = 1000;
 
     String message;
-
     T result;
-
-    public ApiResponse(T result) {
-        this.code = 1000;
-        this.result = result;
-    }
 }
