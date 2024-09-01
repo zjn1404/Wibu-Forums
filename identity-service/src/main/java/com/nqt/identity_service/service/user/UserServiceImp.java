@@ -127,7 +127,7 @@ public class UserServiceImp implements UserService {
     public UserResponse getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository
-                .findByUsername(authentication.getName())
+                .findById(authentication.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         UserResponse userResponse = userMapper.toUserResponse(user);

@@ -155,7 +155,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                     .build());
 
             return buildAuthenticationResponse(userRepository
-                    .findByUsername(token.getJWTClaimsSet().getSubject())
+                    .findById(token.getJWTClaimsSet().getSubject())
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
         } catch (Exception e) {
             throw new AppException(ErrorCode.INVALID_TOKEN);
@@ -179,7 +179,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
     public void createPassword(PasswordCreationRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository
-                .findByUsername(authentication.getName())
+                .findById(authentication.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (StringUtils.hasText(user.getPassword())) {
@@ -194,7 +194,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
     public void changePassword(ChangePasswordRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository
-                .findByUsername(authentication.getName())
+                .findById(authentication.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
@@ -266,7 +266,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     private JWTClaimsSet buildAccessTokenClaims(User user, String id, String otherId, long duration) {
         return new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId())
                 .jwtID(id)
                 .issuer("nqt.com")
                 .issueTime(new Date())
@@ -279,7 +279,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     private JWTClaimsSet buildRefreshTokenClaims(User user, String id, String otherId, long duration) {
         return new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId())
                 .jwtID(id)
                 .issuer("nqt.com")
                 .issueTime(new Date())
