@@ -66,6 +66,17 @@ public class Utils {
         return mailContent;
     }
 
+    public String buildVerifyCodeMail(User user) {
+
+        VerifyCode verifyCode = generateVerifyCode(user);
+
+        String mailContent = "<p>Dear " + user.getUsername() + ",</p>";
+        mailContent += "<p> You Verification Code: " + verifyCode.getVerifyCode() + "</p>";
+        mailContent += "<p> Thank you! <br> The Wibu Forums Team <p>";
+
+        return mailContent;
+    }
+
     public VerifyCode generateVerifyCode(User user) {
         Date expiryTime = new Date(
                 Instant.now().plus(verifyCodeValidDuration, ChronoUnit.SECONDS).toEpochMilli());

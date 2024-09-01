@@ -6,11 +6,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.MessagingException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.nqt.identity_service.dto.request.SendVerificationRequest;
 import com.nqt.identity_service.dto.response.ApiResponse;
 import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.service.verifycode.VerifyCodeService;
@@ -19,7 +17,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/verify")
 @RequiredArgsConstructor
@@ -49,6 +49,15 @@ public class VerifyCodeController {
         return ApiResponse.builder()
                 .code(ErrorCode.VERIFY_CODE_EXPIRED.getCode())
                 .message(ErrorCode.VERIFY_CODE_EXPIRED.getMessage())
+                .build();
+    }
+
+    @PostMapping("/send-verify-code")
+    public ApiResponse<Object> sendVerifyCode(@RequestBody SendVerificationRequest request) {
+        verifyCodeService.sendVerifyCode(request);
+
+        return ApiResponse.builder()
+                .message("Verification code has been sent to your email!")
                 .build();
     }
 }

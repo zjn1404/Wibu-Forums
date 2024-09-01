@@ -30,10 +30,4 @@ public class InternalUserProfileController {
             @PathVariable String id, @RequestBody UserProfileUpdateRequest request) {
         return new ApiResponse<>(userProfileService.updateUserProfile(id, request));
     }
-
-    @PutMapping
-    public ApiResponse<UserProfileResponse> deleteUserProfile(
-            @RequestParam("userId") String userId, @RequestBody UserProfileUpdateRequest request) {
-        return new ApiResponse<>(userProfileService.updateUserProfileByUserId(userId, request));
-    }
 }

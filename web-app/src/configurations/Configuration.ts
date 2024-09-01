@@ -7,6 +7,12 @@ export const API = {
   REGISTER: "/identity/users/registration",
   LOGOUT: "/identity/auth/logout",
   MY_INFO: "/identity/users/my-info",
+  UPDATE_MY_INFO: "/identity/users/my-info",
+  MY_PROFILE: "/profile/users/my-profile",
+  UPDATE_PROFILE: "/profile/users",
+  MY_POSTS: "/post/my-posts",
+  CHANGE_PASSWORD: "/identity/auth/change-password",
+  SEND_VERIFICATION_CODE: "/identity/verify/send-verify-code",
 };
 
 export const OAUTHCONFIG = {

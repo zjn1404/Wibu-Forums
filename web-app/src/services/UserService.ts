@@ -9,3 +9,15 @@ export const getMyInfo = async () => {
     },
   });
 };
+
+export const updateMyInfo = async (email: string, phoneNumber: string, verifyCode: string) => {
+  return await HttpClient.put(API.UPDATE_MY_INFO, {
+    email,
+    phoneNumber,
+    verifyCode,
+  }, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
+}

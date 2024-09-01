@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.nqt.identity_service.dto.request.user.UpdateMyInfoRequest;
 import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserUpdateRequest;
 import com.nqt.identity_service.dto.response.ApiResponse;
@@ -39,6 +40,13 @@ public class UserController {
     public ApiResponse<UserResponse> updateUser(
             @PathVariable("id") String userId, @RequestBody @Valid UserUpdateRequest request) {
         return new ApiResponse<>(userService.updateUser(userId, request));
+    }
+
+    @PutMapping("/my-info")
+    public ApiResponse<UserResponse> updateMyInfo(@RequestBody @Valid UpdateMyInfoRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateMyInfo(request))
+                .build();
     }
 
     @GetMapping("/{id}")

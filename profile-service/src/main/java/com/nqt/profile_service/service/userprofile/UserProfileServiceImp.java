@@ -2,6 +2,8 @@ package com.nqt.profile_service.service.userprofile;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.nqt.profile_service.dto.request.UserProfileCreationRequest;
@@ -28,6 +30,10 @@ public class UserProfileServiceImp implements UserProfileService {
 
     @Override
     public UserProfileResponse createUserProfile(UserProfileCreationRequest request) {
+        if (userProfileRepository.existsByUserId(request.getUserId())) {
+            throw new AppException(ErrorCode.USER_PROFILE_EXISTED);
+        }
+
         UserProfile userProfile = userProfileMapper.toUserProfile(request);
 
         return userProfileMapper.toUserProfileResponse(userProfileRepository.save(userProfile));
@@ -44,9 +50,10 @@ public class UserProfileServiceImp implements UserProfileService {
     }
 
     @Override
-    public UserProfileResponse updateUserProfileByUserId(String userId, UserProfileUpdateRequest request) {
+    public UserProfileResponse updateMyProfile(UserProfileUpdateRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserProfile userProfile = userProfileRepository
-                .findByUserId(userId)
+                .findByUserId(auth.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_PROFILE_NOT_FOUND));
 
         userProfileMapper.updateUserProfile(userProfile, request);
@@ -54,9 +61,11 @@ public class UserProfileServiceImp implements UserProfileService {
     }
 
     @Override
-    public UserProfileResponse getUserProfileById(String id) {
+    public UserProfileResponse getMyProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         return userProfileMapper.toUserProfileResponse(userProfileRepository
-                .findById(id)
+                .findByUserId(authentication.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_PROFILE_NOT_FOUND)));
     }
 

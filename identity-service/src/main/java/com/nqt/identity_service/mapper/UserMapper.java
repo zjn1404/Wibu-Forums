@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import com.nqt.identity_service.dto.request.user.UpdateMyInfoRequest;
 import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserUpdateRequest;
 import com.nqt.identity_service.dto.response.UserResponse;
@@ -20,6 +21,8 @@ public interface UserMapper {
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "password", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
+
+    void updateMyInfo(@MappingTarget User user, UpdateMyInfoRequest request);
 
     UserResponse toUserResponse(User user);
 }

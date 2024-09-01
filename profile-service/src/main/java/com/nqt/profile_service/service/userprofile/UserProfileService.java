@@ -12,9 +12,9 @@ public interface UserProfileService {
 
     UserProfileResponse updateUserProfile(String id, UserProfileUpdateRequest request);
 
-    UserProfileResponse updateUserProfileByUserId(String userId, UserProfileUpdateRequest request);
+    UserProfileResponse updateMyProfile(UserProfileUpdateRequest request);
 
-    UserProfileResponse getUserProfileById(String userId);
+    UserProfileResponse getMyProfile();
 
     List<UserProfileResponse> getAllProfiles();
 }

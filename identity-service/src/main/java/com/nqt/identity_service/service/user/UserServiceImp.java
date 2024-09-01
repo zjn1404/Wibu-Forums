@@ -12,10 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.nqt.identity_service.dto.request.user.UpdateMyInfoRequest;
 import com.nqt.identity_service.dto.request.user.UserCreationRequest;
 import com.nqt.identity_service.dto.request.user.UserUpdateRequest;
 import com.nqt.identity_service.dto.request.userprofile.UserProfileCreationRequest;
-import com.nqt.identity_service.dto.request.userprofile.UserProfileUpdateRequest;
 import com.nqt.identity_service.dto.response.UserResponse;
 import com.nqt.identity_service.entity.Role;
 import com.nqt.identity_service.entity.User;
@@ -111,8 +111,22 @@ public class UserServiceImp implements UserService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        UserProfileUpdateRequest userProfileUpdateRequest = userProfileMapper.toUserProfileUpdateRequest(request);
-        profileClient.updateUserProfile(user.getId(), userProfileUpdateRequest);
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    public UserResponse updateMyInfo(UpdateMyInfoRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!verifyCodeService.verify(request.getVerifyCode(), authentication.getName())) {
+            throw new AppException(ErrorCode.VERIFY_CODE_INCORRECT);
+        }
+
+        User user = userRepository
+                .findById(authentication.getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        userMapper.updateMyInfo(user, request);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

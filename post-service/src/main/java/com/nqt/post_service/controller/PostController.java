@@ -2,17 +2,13 @@ package com.nqt.post_service.controller;
 
 import com.nqt.post_service.dto.request.PostRequest;
 import com.nqt.post_service.dto.response.ApiResponse;
+import com.nqt.post_service.dto.response.PageResponse;
 import com.nqt.post_service.dto.response.PostResponse;
 import com.nqt.post_service.service.post.PostService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +25,10 @@ public class PostController {
     }
 
     @GetMapping("/my-posts")
-    public ApiResponse<List<PostResponse>> getMyPosts() {
-        return ApiResponse.<List<PostResponse>>builder()
-                .result(postService.getMyPosts())
+    public ApiResponse<PageResponse<PostResponse>> getMyPosts(@RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
+                                                              @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
+        return ApiResponse.<PageResponse<PostResponse>>builder()
+                .result(postService.getMyPosts(currentPage, pageSize))
                 .build();
     }
 

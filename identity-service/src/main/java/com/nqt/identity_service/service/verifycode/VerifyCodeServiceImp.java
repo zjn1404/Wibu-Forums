@@ -6,10 +6,13 @@ import java.util.List;
 import jakarta.transaction.Transactional;
 
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.nqt.event.dto.NotificationEvent;
 import com.nqt.event.dto.Recipient;
+import com.nqt.identity_service.dto.request.SendVerificationRequest;
 import com.nqt.identity_service.entity.User;
 import com.nqt.identity_service.entity.VerifyCode;
 import com.nqt.identity_service.exception.AppException;
@@ -21,7 +24,9 @@ import com.nqt.identity_service.utils.Utils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -64,6 +69,29 @@ public class VerifyCodeServiceImp implements VerifyCodeService {
                         .build()))
                 .subject("VERIFICATION MAIL")
                 .body(utils.buildVerificationMailBody(user))
+                .build();
+
+        kafkaTemplate.send("notification-delivery", notificationEvent);
+    }
+
+    @Override
+    public void sendVerifyCode(SendVerificationRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        verifyCodeRepository.deleteByUserId(authentication.getName());
+
+        User user = userRepository
+                .findById(authentication.getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .channel("EMAIL")
+                .recipients(List.of(Recipient.builder()
+                        .name(user.getUsername())
+                        .email(request.getEmail())
+                        .build()))
+                .subject("VERIFICATION CODE")
+                .body(utils.buildVerifyCodeMail(user))
                 .build();
 
         kafkaTemplate.send("notification-delivery", notificationEvent);

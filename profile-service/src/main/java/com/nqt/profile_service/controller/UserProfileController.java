@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.nqt.profile_service.dto.request.UserProfileUpdateRequest;
 import com.nqt.profile_service.dto.response.ApiResponse;
 import com.nqt.profile_service.dto.response.UserProfileResponse;
 import com.nqt.profile_service.service.userprofile.UserProfileService;
@@ -21,9 +22,9 @@ public class UserProfileController {
 
     UserProfileService userProfileService;
 
-    @GetMapping("/{id}")
-    public ApiResponse<UserProfileResponse> getUserProfile(@PathVariable String id) {
-        return new ApiResponse<>(userProfileService.getUserProfileById(id));
+    @GetMapping("/my-profile")
+    public ApiResponse<UserProfileResponse> getMyProfile() {
+        return new ApiResponse<>(userProfileService.getMyProfile());
     }
 
     @GetMapping
@@ -31,6 +32,13 @@ public class UserProfileController {
     public ApiResponse<List<UserProfileResponse>> getAllProfiles() {
         return ApiResponse.<List<UserProfileResponse>>builder()
                 .result(userProfileService.getAllProfiles())
+                .build();
+    }
+
+    @PutMapping
+    public ApiResponse<UserProfileResponse> updateMyProfile(@RequestBody UserProfileUpdateRequest request) {
+        return ApiResponse.<UserProfileResponse>builder()
+                .result(userProfileService.updateMyProfile(request))
                 .build();
     }
 }

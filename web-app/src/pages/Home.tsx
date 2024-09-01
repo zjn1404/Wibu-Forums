@@ -21,7 +21,7 @@ export const Home: React.FC = () => {
   const [password, setPassword] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
-  const [snackType, setSnackType] = useState<"success" | "error">("error");
+  const [snackBarType, setSnackBarType] = useState<"success" | "error">("error");
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseSnackBar = (event?: any, reason?: any) => {
@@ -30,13 +30,13 @@ export const Home: React.FC = () => {
   };
 
   const showError = (message: any) => {
-    setSnackType("error");
+    setSnackBarType("error");
     setSnackBarMessage(message);
     setSnackBarOpen(true);
   };
 
   const showSuccess = (message: any) => {
-    setSnackType("success");
+    setSnackBarType("success");
     setSnackBarMessage(message);
     setSnackBarOpen(true);
   };
@@ -103,7 +103,7 @@ export const Home: React.FC = () => {
       >
         <Alert
           onClose={handleCloseSnackBar}
-          severity={snackType}
+          severity={snackBarType}
           variant="filled"
           sx={{ width: "100%" }}
         >

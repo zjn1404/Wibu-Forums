@@ -15,7 +15,6 @@ export const Header: React.FC<{
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div className="container">
-        {/* Logo */}
         <Link to="/" className="navbar-brand">
           <img
             src="/logo/logo-transparent.png"
@@ -25,7 +24,6 @@ export const Header: React.FC<{
           />
         </Link>
 
-        {/* Toggle button for mobile */}
         <button
           className="navbar-toggler"
           type="button"
@@ -38,7 +36,6 @@ export const Header: React.FC<{
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Search bar */}
         <div className="collapse navbar-collapse" id="navbarContent">
           <div className="d-flex align-items-center w-40">
             <form className="w-100 d-flex">
@@ -54,7 +51,6 @@ export const Header: React.FC<{
             </form>
           </div>
 
-          {/* Icons in the middle */}
           <ul className="navbar-nav d-flex align-items-center mx-auto">
             <li className="nav-item">
               <Link to="/" className="nav-link text-white ms-5 me-5">
@@ -86,7 +82,6 @@ export const Header: React.FC<{
             </li>
           </ul>
 
-          {/* Right-side content */}
           <div className="d-flex align-items-center justify-content-center">
             <div className="nav-item dropdown">
               <a
@@ -114,6 +109,11 @@ export const Header: React.FC<{
                 <li>
                   <Link to="/profile" className="dropdown-item btn btn-dark">
                     Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/account" className="dropdown-item btn btn-dark">
+                    Account
                   </Link>
                 </li>
                 <li>

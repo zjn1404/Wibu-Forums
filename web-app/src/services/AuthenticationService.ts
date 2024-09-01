@@ -21,7 +21,16 @@ export const logIn = async (username: string, password: string) => {
   return response;
 };
 
-export const register = async (username: string, password: string, email: string, phoneNumber: string, firstName: string, lastName: string, address: string, dob: Date) => {
+export const register = async (
+  username: string,
+  password: string,
+  email: string,
+  phoneNumber: string,
+  firstName: string,
+  lastName: string,
+  address: string,
+  dob: Date
+) => {
   const response = await HttpClient.post(API.REGISTER, {
     username: username,
     password: password,
@@ -31,11 +40,11 @@ export const register = async (username: string, password: string, email: string
     lastName: lastName,
     address: address,
     dob: dob,
-    roles: ["USER"]
+    roles: ["USER"],
   });
 
   return response;
-}
+};
 
 export const logOut = async () => {
   const response = await HttpClient.post(API.LOGOUT, {
@@ -47,4 +56,22 @@ export const logOut = async () => {
 
 export const isAuthenticated = () => {
   return getAccessToken();
+};
+
+export const changePassword = async (
+  currentPassword: string,
+  newPassword: string
+) => {
+  return await HttpClient.post(
+    API.CHANGE_PASSWORD,
+    {
+      oldPassword: currentPassword,
+      newPassword: newPassword,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    }
+  );
 };
