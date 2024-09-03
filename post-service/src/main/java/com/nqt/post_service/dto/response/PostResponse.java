@@ -5,6 +5,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
+@ToString
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor
@@ -14,6 +16,7 @@ public class PostResponse {
     String id;
     String content;
     String userId;
+    String formattedPostedDate;
     Date postedDate;
     Date modifiedDate;
 }

@@ -1,223 +1,171 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Box, Card, CircularProgress, Typography } from "@mui/material";
+import { isAuthenticated, logOut } from "../services/AuthenticationService";
+import { Post } from "../components/Post";
+import { getMyPosts } from "../services/PostService";
 import { Header } from "../components/Header";
-import { useEffect, useState } from "react";
-import { getMyInfo } from "../services/UserService";
-import { isAuthenticated } from "../services/AuthenticationService";
-import { getAccessToken } from "../services/LocalStorageService";
-import { CODE } from "../configurations/Configuration";
-import { Alert, Snackbar, Modal, Box, TextField, Button } from "@mui/material";
 
-export const Home: React.FC = () => {
+interface Post {
+  avatarUrl: string;
+  username: string;
+  formattedPostedDate: string;
+  postedDate: string;
+  content: string;
+}
+
+export const Home = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastPostElementRef = useRef<HTMLDivElement | null>(null);
+
   const navigate = useNavigate();
-  const [userDetails, setUserDetails] = useState({
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    noPassword: ""
-  });
-
-  const [password, setPassword] = useState("");
-  const [snackBarOpen, setSnackBarOpen] = useState(false);
-  const [snackBarMessage, setSnackBarMessage] = useState("");
-  const [snackBarType, setSnackBarType] = useState<"success" | "error">("error");
-  const [openModal, setOpenModal] = useState(false);
-
-  const handleCloseSnackBar = (event?: any, reason?: any) => {
-    if (reason === "clickaway") return;
-    setSnackBarOpen(false);
-  };
-
-  const showError = (message: any) => {
-    setSnackBarType("error");
-    setSnackBarMessage(message);
-    setSnackBarOpen(true);
-  };
-
-  const showSuccess = (message: any) => {
-    setSnackBarType("success");
-    setSnackBarMessage(message);
-    setSnackBarOpen(true);
-  };
-
-  const getUserDetails = async () => {
-    try {
-      const response = await getMyInfo();
-      const data = response.data;
-
-      setUserDetails(data.result);
-
-      if (data.result.noPassword) {
-        setOpenModal(true); // Open the modal if no password is set
-      }
-    } catch (error) {}
-  };
 
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate("/login");
     } else {
-      getUserDetails();
+      loadPosts(page);
     }
-  }, [navigate]);
+  }, [navigate, page]);
 
-  const addPassword = (event: any) => {
-    event.preventDefault();
+  const loadPosts = useCallback(
+    (page: number) => {
+      console.log(`loading posts for page ${page}`);
+      setLoading(true);
+      getMyPosts(page)
+        .then((response) => {
+          setTotalPages(response.data.result.totalPages);
 
-    const body = {
-      password: password,
-    };
+          // Transform response data to match the expected structure
+          const transformedPosts = response.data.result.data.map(
+            (post: any) => {
+              if (post.user) {
+                return {
+                  avatarUrl: post.user.avatarUrl ?? "",
+                  username: post.user.username ?? "Unknown",
+                  formattedPostedDate: post.formattedPostedDate ?? "",
+                  postedDate: post.postedDate ?? "",
+                  content: post.content ?? "",
+                };
+              }
+              return {
+                avatarUrl: "",
+                username: "Unknown",
+                formattedPostedDate: post.formattedPostedDate ?? "",
+                postedDate: post.postedDate ?? "",
+                content: post.content ?? "",
+              };
+            }
+          );
 
-    fetch("http://localhost:8888/api/identity/auth/create-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAccessToken()}`,
+          setPosts((prevPosts) => [...prevPosts, ...transformedPosts]);
+          setHasMore(response.data.result.data.length > 0);
+          console.log("loaded posts:", response.data.result);
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 401) {
+            logOut();
+            navigate("/login");
+          } else {
+            console.error("An error occurred while fetching posts:", error);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [navigate]
+  );
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && page < totalPages) {
+          setPage((prevPage) => prevPage + 1);
+        }
       },
-      body: JSON.stringify(body),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        if (data.code !== CODE.SUCCESS) throw new Error(data.message);
+      { threshold: 1.0 } // Adjust threshold if necessary
+    );
 
-        getUserDetails();
-        showSuccess(data.message);
-        setOpenModal(false); // Close modal after successful password creation
-      })
-      .catch((error) => {
-        showError(error.message);
-      });
-  };
+    if (lastPostElementRef.current) {
+      observer.current.observe(lastPostElementRef.current);
+    }
+
+    return () => {
+      if (observer.current) observer.current.disconnect();
+    };
+  }, [hasMore, page, totalPages]);
 
   return (
-    <div>
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackBarOpen}
-        onClose={handleCloseSnackBar}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleCloseSnackBar}
-          severity={snackBarType}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackBarMessage}
-        </Alert>
-      </Snackbar>
-
-      {/* Header */}
-      <Header user={userDetails} />
-
-      {/* Modal for creating password */}
-      <Modal
-        open={openModal}
-        onClose={(event, reason) => {
-          if (reason !== "backdropClick") {
-            setOpenModal(false);
-          }
-        }}
-        disableEscapeKeyDown // Disable closing by pressing the Escape key
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-      >
-        <Box
+    <>
+      <Header />
+      <div className="d-flex justify-content-center mt-5">
+        <Card
           sx={{
-            position: "absolute" as "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "#1b1e21",
-            color: "white",
-            boxShadow: 24,
-            p: 4,
+            minWidth: "80%",
+            maxWidth: "80%",
+            boxShadow: 3,
             borderRadius: 2,
-            outline: "none", // Remove blue outline on refresh
+            padding: "20px",
+            overflow: "visible", // Ensures content inside the Card is not clipped
           }}
         >
-          <h2 id="modal-title">Create Password</h2>
-          <form onSubmit={addPassword}>
-          <TextField
-            label="Password"
-            variant="outlined"
-            type="password"
-            fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+          <Box
             sx={{
-              mt: 2,
-              "& .MuiInputBase-root": {
-                color: "#f7f7f7", // Text color for input
-              },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "lightgrey", // Default border color
-                },
-                "&:hover fieldset": {
-                  borderColor: "grey", // Border color on hover
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "lightgrey", // Border color when focused
-                },
-              },
-              "& .MuiInputLabel-root": {
-                color: "white", // Text color for the label
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "white", // Text color for the label when focused
-              },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              width: "100%",
+              gap: "10px",
+              overflow: "visible", // Prevents clipping of the content
             }}
-            InputLabelProps={{
-              style: { color: "white" }, // Ensures label is white
-            }}
-          />
-          <Button
-            variant="contained"
-            color="inherit"
-            type="submit"
-            sx={{ mt: 3, width: "100%" }}
           >
-            Create
-          </Button>
-          </form>
-        </Box>
-      </Modal>
-
-      {/* Main content */}
-      <div className="container mt-5">
-        <div className="row">
-          <div className="col-12">
-            <h1>Welcome to Home Page</h1>
-            <p>
-              Hello, {userDetails?.username || "Guest"}! This is your home page.
-            </p>
-          </div>
-        </div>
-
-        {/* Additional sections if needed */}
-        <div className="row mt-4">
-          <div className="col-md-6">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">Profile</h5>
-                <p className="card-text">
-                  Username: {userDetails.username || "N/A"}
-                </p>
-                <p className="card-text">Email: {userDetails.email || "N/A"}</p>
-                <Link to="/profile" className="btn btn-dark">
-                  View Profile
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
+            <Typography
+              sx={{
+                fontSize: 18,
+                mb: "10px",
+              }}
+            >
+              Your posts,
+            </Typography>
+            {posts.map((post, index) => {
+              return (
+                <Box
+                  ref={posts.length === index + 1 ? lastPostElementRef : null}
+                  key={post.postedDate}
+                  sx={{
+                    width: "100%", // Ensures the Box takes full width of the parent
+                    overflow: "visible", // Prevents clipping of the content
+                  }}
+                >
+                  <Post post={post} />
+                </Box>
+              );
+            })}
+            {loading && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
+                <CircularProgress size="24px" />
+              </Box>
+            )}
+          </Box>
+        </Card>
       </div>
-    </div>
+    </>
   );
 };

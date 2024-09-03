@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Object>> handleException() {
+    public ResponseEntity<ApiResponse<Object>> handleException(Exception ex) {
         ErrorCode uncategorizedError = ErrorCode.UNCATEGORIZED_EXCEPTION;
         return ResponseEntity.status(uncategorizedError.httpStatus)
                 .body(ApiResponse.builder()
