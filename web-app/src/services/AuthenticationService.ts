@@ -58,6 +58,15 @@ export const isAuthenticated = () => {
   return getAccessToken();
 };
 
+export const refreshToken = async () => {
+  const response = await HttpClient.post(API.REFRESH_TOKEN, {
+    token: getRefreshToken(),
+  });
+  
+  setAccessToken(response.data?.result?.accessToken);
+  setRefreshToken(response.data?.result?.refreshToken);
+}
+
 export const changePassword = async (
   currentPassword: string,
   newPassword: string

@@ -1,3 +1,5 @@
+import { REFRESH_TOKEN } from "../services/LocalStorageService";
+
 export const CONFIG = {
   API_GATEWAY: "http://localhost:8888/api",
 };
@@ -13,6 +15,7 @@ export const API = {
   MY_POSTS: "/post/my-posts",
   CHANGE_PASSWORD: "/identity/auth/change-password",
   SEND_VERIFICATION_CODE: "/identity/verify/send-verify-code",
+  REFRESH_TOKEN: "/identity/auth/refresh"
 };
 
 export const OAUTHCONFIG = {
