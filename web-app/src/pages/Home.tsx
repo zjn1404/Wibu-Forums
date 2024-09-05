@@ -1,10 +1,18 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Card, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CircularProgress,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { isAuthenticated, logOut } from "../services/AuthenticationService";
 import { Post } from "../components/Post";
-import { getMyPosts } from "../services/PostService";
+import { getMyPosts, createPost } from "../services/PostService";
 import { Header } from "../components/Header";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Post {
   avatarUrl: string;
@@ -21,6 +29,15 @@ export const Home = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
+  const [newPostContent, setNewPostContent] = useState("");
+  const [newPostImages, setNewPostImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [creatingPost, setCreatingPost] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastPostElementRef = useRef<HTMLDivElement | null>(null);
@@ -37,13 +54,10 @@ export const Home = () => {
 
   const loadPosts = useCallback(
     (page: number) => {
-      console.log(`loading posts for page ${page}`);
       setLoading(true);
       getMyPosts(page)
         .then((response) => {
           setTotalPages(response.data.result.totalPages);
-
-          // Transform response data to match the expected structure
           const transformedPosts = response.data.result.data.map(
             (post: any) => {
               if (post.user) {
@@ -66,10 +80,8 @@ export const Home = () => {
               };
             }
           );
-
           setPosts((prevPosts) => [...prevPosts, ...transformedPosts]);
           setHasMore(response.data.result.data.length > 0);
-          console.log("loaded posts:", response.data.result);
         })
         .catch((error) => {
           if (error.response && error.response.status === 401) {
@@ -97,7 +109,7 @@ export const Home = () => {
           setPage((prevPage) => prevPage + 1);
         }
       },
-      { threshold: 1.0 } // Adjust threshold if necessary
+      { threshold: 1.0 }
     );
 
     if (lastPostElementRef.current) {
@@ -109,8 +121,78 @@ export const Home = () => {
     };
   }, [hasMore, page, totalPages]);
 
+  const handleCreatePost = () => {
+    if (!newPostContent) {
+      setSnackbarMessage("Content is required");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
+
+    setCreatingPost(true);
+
+    const formData = new FormData();
+    formData.append("content", newPostContent);
+    newPostImages.forEach((image) => formData.append("images", image));
+
+    createPost(formData)
+      .then((response) => {
+        setPosts((prevPosts) => [response.data.result, ...prevPosts]);
+        setNewPostContent("");
+        setNewPostImages([]);
+        setImagePreviews([]);
+        setSnackbarMessage("Post created successfully!");
+        setSnackbarSeverity("success");
+      })
+      .catch((error) => {
+        setSnackbarMessage("An error occurred while creating the post");
+        setSnackbarSeverity("error");
+        console.error("An error occurred while creating the post:", error);
+      })
+      .finally(() => {
+        setCreatingPost(false);
+        setOpenSnackbar(true);
+      });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setNewPostImages((prevImages) => [...prevImages, ...filesArray]);
+
+      const previewUrls = filesArray.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prevPreviews) => [...prevPreviews, ...previewUrls]);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setNewPostImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImagePreviews((prevPreviews) =>
+      prevPreviews.filter((_, i) => i !== index)
+    );
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   return (
     <>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <Header />
       <div className="d-flex justify-content-center mt-5">
         <Card
@@ -120,9 +202,144 @@ export const Home = () => {
             boxShadow: 3,
             borderRadius: 2,
             padding: "20px",
-            overflow: "visible", // Ensures content inside the Card is not clipped
+            overflow: "visible",
           }}
         >
+          {/* Post Creation Area */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              marginBottom: "20px",
+              width: "100%",
+              padding: "10px",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography sx={{ fontSize: 16, fontWeight: "bold" }}>
+              Create a Post
+            </Typography>
+            <textarea
+              placeholder="What's on your mind?"
+              value={newPostContent}
+              onChange={(e) => setNewPostContent(e.target.value)}
+              rows={3}
+              style={{
+                width: "100%",
+                padding: "8px",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                resize: "none",
+              }}
+            />
+            {/* Custom File Upload Button */}
+            <label
+              htmlFor="upload-button"
+              style={{
+                display: "inline-block",
+                backgroundColor: "#1b1e21",
+                color: "#fff",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                marginTop: "8px",
+                textAlign: "center",
+              }}
+            >
+              Add Image
+            </label>
+            <input
+              id="upload-button"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageChange}
+              style={{
+                display: "none", // Hide the default input
+              }}
+            />
+            {/* Image Previews */}
+            <Box sx={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              {imagePreviews.map((preview, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    position: "relative",
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "4px",
+                    overflow: "hidden",
+                    "&:hover .overlay": {
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  {/* Display the image */}
+                  <img
+                    src={preview}
+                    alt={`preview-${index}`}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "4px",
+                    }}
+                  />
+
+                  {/* Overlay with Delete Icon */}
+                  <Box
+                    className="overlay"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      opacity: 0,
+                      transition: "opacity 0.3s ease",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => removeImage(index)}
+                  >
+                    <DeleteIcon fontSize="medium" sx={{ color: "white" }} />
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px",
+                marginTop: "10px",
+              }}
+            >
+              <button
+                onClick={handleCreatePost}
+                disabled={creatingPost}
+                style={{
+                  backgroundColor: "#1b1e21",
+                  color: "#fff",
+                  border: "none",
+                  padding: "8px 16px",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  opacity: creatingPost ? 0.7 : 1,
+                }}
+              >
+                {creatingPost ? "Posting..." : "Post"}
+              </button>
+            </Box>
+          </Box>
+
+          {/* Displaying Posts */}
           <Box
             sx={{
               display: "flex",
@@ -130,42 +347,30 @@ export const Home = () => {
               alignItems: "flex-start",
               width: "100%",
               gap: "10px",
-              overflow: "visible", // Prevents clipping of the content
+              overflow: "visible",
             }}
           >
             <Typography
               sx={{
                 fontSize: 18,
-                mb: "10px",
+                fontWeight: "bold",
+                marginBottom: "10px",
               }}
             >
-              Your posts,
+              Your Posts
             </Typography>
-            {posts.map((post, index) => {
-              return (
-                <Box
-                  ref={posts.length === index + 1 ? lastPostElementRef : null}
-                  key={post.postedDate}
-                  sx={{
-                    width: "100%", // Ensures the Box takes full width of the parent
-                    overflow: "visible", // Prevents clipping of the content
-                  }}
-                >
-                  <Post post={post} />
-                </Box>
-              );
-            })}
+            {posts.map((post, index) => (
+              <Post key={"post" + index} post={post} />
+            ))}
             {loading && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  width: "100%",
-                }}
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: "100%" }}
               >
-                <CircularProgress size="24px" />
-              </Box>
+                <CircularProgress />
+              </div>
             )}
+            <div ref={lastPostElementRef} />
           </Box>
         </Card>
       </div>
