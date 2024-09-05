@@ -12,6 +12,7 @@ interface Post {
   formattedPostedDate: string;
   postedDate: string;
   content: string;
+  image: string;
 }
 
 export const Home = () => {
@@ -52,6 +53,7 @@ export const Home = () => {
                   formattedPostedDate: post.formattedPostedDate ?? "",
                   postedDate: post.postedDate ?? "",
                   content: post.content ?? "",
+                  image: post.image ?? "",
                 };
               }
               return {
@@ -60,6 +62,7 @@ export const Home = () => {
                 formattedPostedDate: post.formattedPostedDate ?? "",
                 postedDate: post.postedDate ?? "",
                 content: post.content ?? "",
+                image: post.image ?? "",
               };
             }
           );

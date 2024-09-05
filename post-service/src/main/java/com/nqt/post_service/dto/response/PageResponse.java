@@ -1,17 +1,17 @@
 package com.nqt.post_service.dto.response;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.Collections;
 import java.util.List;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PageResponse <T> {
+public class PageResponse<T> {
     int currentPage;
     int totalPages;
     int pageSize;

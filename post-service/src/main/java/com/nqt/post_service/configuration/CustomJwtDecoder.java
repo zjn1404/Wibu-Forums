@@ -1,17 +1,19 @@
 package com.nqt.post_service.configuration;
 
-import com.nimbusds.jwt.SignedJWT;
-import com.nqt.post_service.exception.AppException;
-import com.nqt.post_service.exception.ErrorCode;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.text.ParseException;
+
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
+import com.nimbusds.jwt.SignedJWT;
+import com.nqt.post_service.exception.AppException;
+import com.nqt.post_service.exception.ErrorCode;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Component
 @RequiredArgsConstructor

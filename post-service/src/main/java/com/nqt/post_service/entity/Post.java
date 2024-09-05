@@ -1,11 +1,13 @@
 package com.nqt.post_service.entity;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import java.util.Date;
+
+import org.bson.types.Binary;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.util.Date;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Document("post")
 @Getter
@@ -17,8 +19,10 @@ import java.util.Date;
 public class Post {
     @MongoId
     String id;
+
     String userId;
     String content;
+    Binary image;
     Date postedDate;
     Date modifiedDate;
 }
