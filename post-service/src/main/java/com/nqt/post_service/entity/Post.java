@@ -1,6 +1,7 @@
 package com.nqt.post_service.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import org.bson.types.Binary;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,7 +23,7 @@ public class Post {
 
     String userId;
     String content;
-    Binary image;
+    List<Binary> images;
     Date postedDate;
     Date modifiedDate;
 }

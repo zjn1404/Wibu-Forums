@@ -10,17 +10,18 @@ import {
 } from "@mui/material";
 import { isAuthenticated, logOut } from "../services/AuthenticationService";
 import { Post } from "../components/Post";
-import { getMyPosts, createPost } from "../services/PostService";
+import { getMyPosts, createPost, deletePost } from "../services/PostService";
 import { Header } from "../components/Header";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Post {
+  id: string;
   avatarUrl: string;
   username: string;
   formattedPostedDate: string;
   postedDate: string;
   content: string;
-  image: string;
+  images: string[];
 }
 
 export const Home = () => {
@@ -64,19 +65,21 @@ export const Home = () => {
                 return {
                   avatarUrl: post.user.avatarUrl ?? "",
                   username: post.user.username ?? "Unknown",
+                  id: post.id,
                   formattedPostedDate: post.formattedPostedDate ?? "",
                   postedDate: post.postedDate ?? "",
                   content: post.content ?? "",
-                  image: post.image ?? "",
+                  images: post.images ?? [],
                 };
               }
               return {
+                id: post.id,
                 avatarUrl: "",
                 username: "Unknown",
                 formattedPostedDate: post.formattedPostedDate ?? "",
                 postedDate: post.postedDate ?? "",
                 content: post.content ?? "",
-                image: post.image ?? "",
+                images: post.images ?? [],
               };
             }
           );
@@ -176,6 +179,25 @@ export const Home = () => {
     setOpenSnackbar(false);
   };
 
+  const handleDeletePost = async (id: string) => {
+    try {
+      const response = await deletePost(id);
+      if (response) {
+        setSnackbarMessage(response.data.message);
+        setSnackbarSeverity("success");
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+      } else {
+        setSnackbarMessage("Failed to delete post");
+        setSnackbarSeverity("error");
+      }
+    } catch (error) {
+      setSnackbarMessage("An error occurred");
+      setSnackbarSeverity("error");
+    } finally {
+      setOpenSnackbar(true);
+    }
+  };
+
   return (
     <>
       <Snackbar
@@ -258,7 +280,7 @@ export const Home = () => {
               multiple
               onChange={handleImageChange}
               style={{
-                display: "none", // Hide the default input
+                display: "none",
               }}
             />
             {/* Image Previews */}
@@ -338,40 +360,19 @@ export const Home = () => {
               </button>
             </Box>
           </Box>
+          {/* Posts List */}
+          <Typography sx={{ fontSize: 16, fontWeight: "bold", marginBottom: "10px" }}>
+            Posts
+          </Typography>
 
-          {/* Displaying Posts */}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              width: "100%",
-              gap: "10px",
-              overflow: "visible",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: 18,
-                fontWeight: "bold",
-                marginBottom: "10px",
-              }}
-            >
-              Your Posts
-            </Typography>
-            {posts.map((post, index) => (
-              <Post key={"post" + index} post={post} />
-            ))}
-            {loading && (
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ width: "100%" }}
-              >
-                <CircularProgress />
-              </div>
-            )}
-            <div ref={lastPostElementRef} />
-          </Box>
+          {posts.map((post) => (
+            <Post key={post.id} post={post} onDelete={() => handleDeletePost(post.id)} />
+          ))}
+          {loading && (
+            <div className="d-flex justify-content-center mt-4">
+              <CircularProgress />
+            </div>
+          )}
         </Card>
       </div>
     </>

@@ -28,7 +28,7 @@ public enum ErrorCode {
     UNAUTHORIZED(4001, HttpStatus.FORBIDDEN, "Don't have permission"),
 
     // Not Found error (5xxx)
-    USER_PROFILE_NOT_FOUND(5004, HttpStatus.BAD_REQUEST, "User profile not found"),
+    USER_PROFILE_NOT_FOUND(5004, HttpStatus.NOT_FOUND, "User profile not found"),
     ;
 
     final int code;

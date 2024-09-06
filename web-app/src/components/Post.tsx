@@ -1,18 +1,41 @@
-import { Box, Avatar, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import {
+  Box,
+  Avatar,
+  Typography,
+  IconButton,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { deletePost } from "../services/PostService"; // Adjust import path as needed
 
 export const Post: React.FC<{
   post: {
+    id: string;
     avatarUrl: string;
     username: string;
     formattedPostedDate: string;
-    postedDate: string;
     content: string;
-    image?: string; // base64 encoded image (optional)
+    images?: string[];
   };
+  onDelete: (id: string) => Promise<void>; 
 }> = (props) => {
-  const { avatarUrl, username, formattedPostedDate, content, image } =
-    props.post;
+  const {
+    id,
+    avatarUrl,
+    username,
+    formattedPostedDate,
+    content,
+    images = [],
+  } = props.post;
+  const onDelete = props.onDelete;
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   let formattedContent;
   try {
@@ -21,10 +44,34 @@ export const Post: React.FC<{
     formattedContent = content;
   }
 
-  // Check if the image is defined and determine its type
-  const imageSrc = image
-    ? `data:image/${image.startsWith("/9j/") ? "jpeg" : "png"};base64,${image}`
-    : "";
+  const getImageSrc = (image: string) => {
+    const mimeType = image.startsWith("/9j/") ? "jpeg" : "png";
+    return `data:image/${mimeType};base64,${image}`;
+  };
+
+  const handleDelete = () => {
+    onDelete(id);
+  };
+
+  const getGridTemplateColumns = () => {
+    switch (images.length) {
+      case 1:
+        return "1fr";
+      case 2:
+        return "repeat(2, 1fr)";
+      case 3:
+        return "repeat(3, 1fr)";
+      case 4:
+        return "repeat(2, 1fr)";
+      default:
+        return "repeat(3, 1fr)";
+    }
+  };
+
+  // Close Snackbar
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   return (
     <Box
@@ -42,8 +89,32 @@ export const Post: React.FC<{
         backgroundColor: "#ffffff",
         overflow: "visible",
         boxSizing: "border-box",
+        position: "relative", // Allow positioning of delete button
+        "&:hover .delete-button": {
+          opacity: 1, // Show button on hover
+        },
       }}
     >
+      {/* Delete Button on the Top Right Corner */}
+      <IconButton
+        className="delete-button"
+        onClick={handleDelete}
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          color: "#fff",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+          },
+          opacity: 0, // Initially hidden
+          transition: "opacity 0.3s",
+        }}
+      >
+        <DeleteIcon />
+      </IconButton>
+
       <Avatar
         src={avatarUrl || `${process.env.PUBLIC_URL}/logo/logo.jpeg`}
         sx={{ marginRight: 2, width: 56, height: 56 }}
@@ -104,32 +175,50 @@ export const Post: React.FC<{
           {formattedContent}
         </Typography>
 
-        {/* Image below content */}
-        {image && (
+        {/* Display Images in a Grid */}
+        {images.length > 0 && (
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              height: "auto", // Adjust height if needed
+              display: "grid",
+              gridTemplateColumns: getGridTemplateColumns(),
+              gap: 1,
               marginTop: 2,
             }}
           >
-            <Box
-              component="img"
-              src={imageSrc}
-              alt="Post Image"
-              sx={{
-                maxWidth: "100%", 
-                maxHeight: "300px", 
-                objectFit: "contain",
-                borderRadius: "8px",
-              }}
-            />
+            {images.map((image, index) => (
+              <Box
+                key={index}
+                component="img"
+                src={getImageSrc(image)}
+                alt={`Post Image ${index + 1}`}
+                sx={{
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  gridColumn:
+                    images.length === 3 && index === 2 ? "span 2" : undefined,
+                }}
+              />
+            ))}
           </Box>
         )}
       </Box>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

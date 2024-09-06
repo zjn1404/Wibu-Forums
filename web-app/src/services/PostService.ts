@@ -23,3 +23,15 @@ export const getMyPosts = async (page: any) => {
     },
   });
 };
+
+export const deletePost = async (postId: string) => {
+
+  return await HttpClient.delete(API.DELETE_POST, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+    params: {
+      postId: postId,
+    },
+  });
+};

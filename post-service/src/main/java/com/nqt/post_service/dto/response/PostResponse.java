@@ -1,6 +1,7 @@
 package com.nqt.post_service.dto.response;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 public class PostResponse {
     String id;
     String content;
-    String image;
+    List<String> images;
     String userId;
     String formattedPostedDate;
     Date postedDate;

@@ -27,6 +27,7 @@ public enum ErrorCode {
     UNAUTHORIZED(4001, HttpStatus.FORBIDDEN, "Don't have permission"),
     // Not Found error (5xxx)
     USER_NOT_EXISTED(5001, HttpStatus.NOT_FOUND, "User Not Existed"),
+    POST_NOT_FOUND(5004, HttpStatus.NOT_FOUND, "Post Not Found"),
     ;
 
     final int code;

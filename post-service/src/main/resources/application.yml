@@ -14,3 +14,8 @@ spring:
       enabled: true
       max-file-size: 256MB
       max-request-size: 256MB
+
+message:
+  controller:
+    post:
+      delete: "Post has been deleted!"

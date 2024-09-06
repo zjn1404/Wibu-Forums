@@ -1,6 +1,7 @@
 package com.nqt.post_service.service.post;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -14,8 +15,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.nqt.post_service.dto.request.PostRequest;
+import com.nqt.post_service.dto.request.PostUpdateRequest;
 import com.nqt.post_service.dto.response.PageResponse;
 import com.nqt.post_service.dto.response.PostResponse;
 import com.nqt.post_service.entity.Post;
@@ -42,14 +45,16 @@ public class PostServiceImp implements PostService {
     DateFormatter dateFormatter;
 
     @Override
-    public PostResponse createPost(PostRequest postRequest) {
-        log.info(postRequest.toString());
+    public PostResponse createPost(PostRequest request) {
+        log.info(request.toString());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Binary image = null;
-        if (postRequest.getImage() != null) {
+        List<Binary> images = null;
+        if (request.getImages() != null) {
+            images = new ArrayList<>();
             try {
-                image = new Binary(
-                        BsonBinarySubType.BINARY, postRequest.getImage().getBytes());
+                for (MultipartFile img : request.getImages()) {
+                    images.add(new Binary(BsonBinarySubType.BINARY, img.getBytes()));
+                }
             } catch (IOException e) {
                 throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
             }
@@ -57,14 +62,14 @@ public class PostServiceImp implements PostService {
 
         Post post = Post.builder()
                 .userId(authentication.getName())
-                .content(postRequest.getContent())
-                .image(image)
+                .content(request.getContent())
+                .images(images)
                 .postedDate(new Date())
                 .modifiedDate(new Date())
                 .build();
 
         PostResponse postResponse = postMapper.toPostResponse(postRepository.save(post));
-        postResponse.setImage(Base64.getEncoder().encodeToString(post.getImage().getData()));
+        postResponse.setImages(encodeImages(post.getImages()));
 
         return postResponse;
     }
@@ -82,9 +87,8 @@ public class PostServiceImp implements PostService {
                 .map(post -> {
                     PostResponse postResponse = postMapper.toPostResponse(post);
                     postResponse.setFormattedPostedDate(dateFormatter.format(post.getPostedDate()));
-                    if (post.getImage() != null) {
-                        postResponse.setImage(Base64.getEncoder()
-                                .encodeToString(post.getImage().getData()));
+                    if (post.getImages() != null) {
+                        postResponse.setImages(encodeImages(post.getImages()));
                     }
                     return postResponse;
                 })
@@ -97,5 +101,34 @@ public class PostServiceImp implements PostService {
                 .totalPages(posts.getTotalPages())
                 .data(postResponses)
                 .build();
+    }
+
+    @Override
+    public PostResponse updatePost(String postId, PostUpdateRequest request) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+        postMapper.updatePost(post, request);
+
+        PostResponse postResponse = postMapper.toPostResponse(post);
+        postResponse.setImages(encodeImages(post.getImages()));
+        postResponse.setFormattedPostedDate(dateFormatter.format(post.getPostedDate()));
+
+        return postResponse;
+    }
+
+    @Override
+    public void deletePost(String postId) {
+        postRepository.deleteById(postId);
+    }
+
+    private List<String> encodeImages(List<Binary> images) {
+        if (images == null) {
+            return List.of();
+        }
+
+        List<String> encodedImages = new ArrayList<>();
+        for (Binary image : images) {
+            encodedImages.add(Base64.getEncoder().encodeToString(image.getData()));
+        }
+        return encodedImages;
     }
 }
