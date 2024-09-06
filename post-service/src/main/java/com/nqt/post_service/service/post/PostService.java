@@ -1,7 +1,7 @@
 package com.nqt.post_service.service.post;
 
-import com.nqt.post_service.dto.request.PostRequest;
-import com.nqt.post_service.dto.request.PostUpdateRequest;
+import com.nqt.post_service.dto.request.post.PostRequest;
+import com.nqt.post_service.dto.request.post.PostUpdateRequest;
 import com.nqt.post_service.dto.response.PageResponse;
 import com.nqt.post_service.dto.response.PostResponse;
 

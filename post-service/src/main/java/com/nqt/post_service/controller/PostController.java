@@ -3,8 +3,8 @@ package com.nqt.post_service.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import com.nqt.post_service.dto.request.PostRequest;
-import com.nqt.post_service.dto.request.PostUpdateRequest;
+import com.nqt.post_service.dto.request.post.PostRequest;
+import com.nqt.post_service.dto.request.post.PostUpdateRequest;
 import com.nqt.post_service.dto.response.ApiResponse;
 import com.nqt.post_service.dto.response.PageResponse;
 import com.nqt.post_service.dto.response.PostResponse;

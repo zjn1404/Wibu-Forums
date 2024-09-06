@@ -1,4 +1,4 @@
-package com.nqt.post_service.dto.request;
+package com.nqt.post_service.dto.request.post;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -17,8 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.nqt.post_service.dto.request.PostRequest;
-import com.nqt.post_service.dto.request.PostUpdateRequest;
+import com.nqt.post_service.dto.request.post.PostRequest;
+import com.nqt.post_service.dto.request.post.PostUpdateRequest;
 import com.nqt.post_service.dto.response.PageResponse;
 import com.nqt.post_service.dto.response.PostResponse;
 import com.nqt.post_service.entity.Post;
@@ -46,7 +46,6 @@ public class PostServiceImp implements PostService {
 
     @Override
     public PostResponse createPost(PostRequest request) {
-        log.info(request.toString());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Binary> images = null;
         if (request.getImages() != null) {
@@ -107,6 +106,8 @@ public class PostServiceImp implements PostService {
     public PostResponse updatePost(String postId, PostUpdateRequest request) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
         postMapper.updatePost(post, request);
+        post.setModifiedDate(new Date());
+
         postRepository.save(post);
 
         PostResponse postResponse = postMapper.toPostResponse(post);

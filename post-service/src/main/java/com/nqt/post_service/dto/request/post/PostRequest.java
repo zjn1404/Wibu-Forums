@@ -1,4 +1,4 @@
-package com.nqt.post_service.dto.request;
+package com.nqt.post_service.dto.request.post;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@ToString
 @Setter
 @Getter
 @Builder

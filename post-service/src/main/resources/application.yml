@@ -20,3 +20,5 @@ message:
     post:
       delete: "Post has been deleted!"
       update: "Post has been updated!"
+    comment:
+      delete: "Delete has been deleted!"

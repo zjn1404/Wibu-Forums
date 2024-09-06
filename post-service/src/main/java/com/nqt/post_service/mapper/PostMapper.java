@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import com.nqt.post_service.dto.request.PostUpdateRequest;
+import com.nqt.post_service.dto.request.post.PostUpdateRequest;
 import com.nqt.post_service.dto.response.PostResponse;
 import com.nqt.post_service.entity.Post;
 

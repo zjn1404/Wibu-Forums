@@ -28,6 +28,7 @@ public enum ErrorCode {
     // Not Found error (5xxx)
     USER_NOT_EXISTED(5001, HttpStatus.NOT_FOUND, "User Not Existed"),
     POST_NOT_FOUND(5004, HttpStatus.NOT_FOUND, "Post Not Found"),
+    COMMENT_NOT_FOUND(5005, HttpStatus.NOT_FOUND, "Comment Not Found"),
     ;
 
     final int code;
