@@ -107,6 +107,7 @@ public class PostServiceImp implements PostService {
     public PostResponse updatePost(String postId, PostUpdateRequest request) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
         postMapper.updatePost(post, request);
+        postRepository.save(post);
 
         PostResponse postResponse = postMapper.toPostResponse(post);
         postResponse.setImages(encodeImages(post.getImages()));

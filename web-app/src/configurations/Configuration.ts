@@ -13,6 +13,7 @@ export const API = {
   CREATE_POST: "/post/create-post",
   MY_POSTS: "/post/my-posts",
   DELETE_POST: "/post/delete-post",
+  UPDATE_POST: "/post/update-post",
   CHANGE_PASSWORD: "/identity/auth/change-password",
   SEND_VERIFICATION_CODE: "/identity/verify/send-verify-code",
   REFRESH_TOKEN: "/identity/auth/refresh"

@@ -26,6 +26,10 @@ public class PostController {
     @Value("${message.controller.post.delete}")
     String deletePostSuccessMessage;
 
+    @NonFinal
+    @Value("${message.controller.post.update}")
+    String updatePostSuccessMessage;
+
     @PostMapping("/create-post")
     public ApiResponse<PostResponse> createPost(@ModelAttribute PostRequest request) {
         return ApiResponse.<PostResponse>builder()
@@ -47,6 +51,7 @@ public class PostController {
             @PathVariable("postId") String postId, @RequestBody PostUpdateRequest request) {
         return ApiResponse.<PostResponse>builder()
                 .result(postService.updatePost(postId, request))
+                .message(updatePostSuccessMessage)
                 .build();
     }
 

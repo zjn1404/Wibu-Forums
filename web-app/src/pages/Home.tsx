@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { isAuthenticated, logOut } from "../services/AuthenticationService";
 import { Post } from "../components/Post";
-import { getMyPosts, createPost, deletePost } from "../services/PostService";
+import { getMyPosts, createPost, deletePost, updatePost } from "../services/PostService";
 import { Header } from "../components/Header";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -198,6 +198,29 @@ export const Home = () => {
     }
   };
 
+  const handleUpdatePost = async (id: string, content: string) => {
+    try {
+      const response = await updatePost(id, content);
+      if (response) {
+        setSnackbarMessage(response.data.message);
+        setSnackbarSeverity("success");
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === id ? { ...post, content: content } : post
+          )
+        );
+      } else {
+        setSnackbarMessage("Failed to update post");
+        setSnackbarSeverity("error");
+      }
+    } catch (error) {
+      setSnackbarMessage("An error occurred");
+      setSnackbarSeverity("error");
+    } finally {
+      setOpenSnackbar(true);
+    }
+  }
+
   return (
     <>
       <Snackbar
@@ -366,7 +389,7 @@ export const Home = () => {
           </Typography>
 
           {posts.map((post) => (
-            <Post key={post.id} post={post} onDelete={() => handleDeletePost(post.id)} />
+            <Post key={post.id} post={post} onDelete={() => handleDeletePost(post.id)} onUpdate={(id, updatedContent) => handleUpdatePost(id, updatedContent)} />
           ))}
           {loading && (
             <div className="d-flex justify-content-center mt-4">

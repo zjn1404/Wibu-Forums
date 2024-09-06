@@ -24,8 +24,17 @@ export const getMyPosts = async (page: any) => {
   });
 };
 
-export const deletePost = async (postId: string) => {
+export const updatePost = async (postId: string, content: string) => {
+  return await HttpClient.put(`${API.UPDATE_POST}/${postId}`, {
+    content: content
+  }, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    }
+  });
+};
 
+export const deletePost = async (postId: string) => {
   return await HttpClient.delete(API.DELETE_POST, {
     headers: {
       Authorization: `Bearer ${getAccessToken()}`,

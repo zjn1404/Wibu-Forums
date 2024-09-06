@@ -4,11 +4,11 @@ import {
   Avatar,
   Typography,
   IconButton,
-  Snackbar,
-  Alert,
+  Button,
+  TextField,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { deletePost } from "../services/PostService"; // Adjust import path as needed
+import EditIcon from "@mui/icons-material/Edit";
 
 export const Post: React.FC<{
   post: {
@@ -19,7 +19,8 @@ export const Post: React.FC<{
     content: string;
     images?: string[];
   };
-  onDelete: (id: string) => Promise<void>; 
+  onDelete: (id: string) => Promise<void>;
+  onUpdate: (id: string, content: string) => Promise<void>;
 }> = (props) => {
   const {
     id,
@@ -30,12 +31,10 @@ export const Post: React.FC<{
     images = [],
   } = props.post;
   const onDelete = props.onDelete;
+  const onUpdate = props.onUpdate;
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(content);
 
   let formattedContent;
   try {
@@ -53,6 +52,19 @@ export const Post: React.FC<{
     onDelete(id);
   };
 
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleUpdate = async () => {
+    await onUpdate(id, editedContent);
+    setIsEditing(false);
+  };
+
+  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedContent(event.target.value);
+  };
+
   const getGridTemplateColumns = () => {
     switch (images.length) {
       case 1:
@@ -66,11 +78,6 @@ export const Post: React.FC<{
       default:
         return "repeat(3, 1fr)";
     }
-  };
-
-  // Close Snackbar
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
   };
 
   return (
@@ -89,31 +96,49 @@ export const Post: React.FC<{
         backgroundColor: "#ffffff",
         overflow: "visible",
         boxSizing: "border-box",
-        position: "relative", // Allow positioning of delete button
-        "&:hover .delete-button": {
-          opacity: 1, // Show button on hover
+        position: "relative",
+        "&:hover .action-buttons": {
+          opacity: 1,
         },
       }}
     >
-      {/* Delete Button on the Top Right Corner */}
-      <IconButton
-        className="delete-button"
-        onClick={handleDelete}
+      <Box
+        className="action-buttons"
         sx={{
           position: "absolute",
           top: 8,
           right: 8,
-          color: "#fff",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          "&:hover": {
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-          },
-          opacity: 0, // Initially hidden
+          display: "flex",
+          gap: 1,
+          opacity: 0,
           transition: "opacity 0.3s",
         }}
       >
-        <DeleteIcon />
-      </IconButton>
+        <IconButton
+          onClick={handleEdit}
+          sx={{
+            color: "#fff",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+            },
+          }}
+        >
+          <EditIcon />
+        </IconButton>
+        <IconButton
+          onClick={handleDelete}
+          sx={{
+            color: "#fff",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+            },
+          }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Box>
 
       <Avatar
         src={avatarUrl || `${process.env.PUBLIC_URL}/logo/logo.jpeg`}
@@ -160,22 +185,48 @@ export const Post: React.FC<{
           </Typography>
         </Box>
 
-        <Typography
-          sx={{
-            fontSize: 15,
-            lineHeight: "1.5",
-            color: "#333",
-            whiteSpace: "pre-wrap",
-            overflow: "auto",
-            maxHeight: "200px",
-            padding: "4px",
-            borderRadius: "4px",
-          }}
-        >
-          {formattedContent}
-        </Typography>
+        {isEditing ? (
+          <>
+            <TextField
+              value={editedContent}
+              onChange={handleContentChange}
+              multiline
+              rows={4}
+              sx={{ marginBottom: 2, width: "100%" }}
+            />
+            <Button
+              variant="contained"
+              className="btn btn-dark"
+              onClick={handleUpdate}
+              sx={{
+                alignSelf: "flex-end",
+                backgroundColor: "#1b1e21",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#343a40",
+                },
+              }}
+            >
+              Update
+            </Button>
+          </>
+        ) : (
+          <Typography
+            sx={{
+              fontSize: 15,
+              lineHeight: "1.5",
+              color: "#333",
+              whiteSpace: "pre-wrap",
+              overflow: "auto",
+              maxHeight: "200px",
+              padding: "4px",
+              borderRadius: "4px",
+            }}
+          >
+            {formattedContent}
+          </Typography>
+        )}
 
-        {/* Display Images in a Grid */}
         {images.length > 0 && (
           <Box
             sx={{
@@ -204,21 +255,6 @@ export const Post: React.FC<{
           </Box>
         )}
       </Box>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbarSeverity}
-          variant="filled"
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
