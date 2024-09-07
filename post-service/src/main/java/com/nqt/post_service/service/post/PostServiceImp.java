@@ -25,6 +25,7 @@ import com.nqt.post_service.entity.Post;
 import com.nqt.post_service.exception.AppException;
 import com.nqt.post_service.exception.ErrorCode;
 import com.nqt.post_service.mapper.PostMapper;
+import com.nqt.post_service.repository.CommentRepository;
 import com.nqt.post_service.repository.PostRepository;
 import com.nqt.post_service.utils.formatter.DateFormatter;
 
@@ -39,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostServiceImp implements PostService {
     PostRepository postRepository;
+    CommentRepository commentRepository;
 
     PostMapper postMapper;
 
@@ -120,6 +122,7 @@ public class PostServiceImp implements PostService {
     @Override
     public void deletePost(String postId) {
         postRepository.deleteById(postId);
+        commentRepository.deleteAllByPostId(postId);
     }
 
     private List<String> encodeImages(List<Binary> images) {

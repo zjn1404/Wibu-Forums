@@ -57,7 +57,10 @@ public class CommentServiceImp implements CommentService {
 
         commentRepository.save(comment);
 
-        return commentMapper.toCommentResponse(comment);
+        CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
+        commentResponse.setFormattedPostedDate(dateFormatter.format(commentResponse.getModifiedDate()));
+
+        return commentResponse;
     }
 
     @Override

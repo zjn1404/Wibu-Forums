@@ -8,4 +8,6 @@ import com.nqt.post_service.entity.Comment;
 
 public interface CommentRepository extends MongoRepository<Comment, String> {
     Page<Comment> findByPostId(String postId, Pageable pageable);
+
+    void deleteAllByPostId(String postId);
 }

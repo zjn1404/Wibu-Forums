@@ -10,23 +10,43 @@ import {
 } from "@mui/material";
 import { isAuthenticated, logOut } from "../services/AuthenticationService";
 import { Post } from "../components/Post";
-import { getMyPosts, createPost, deletePost, updatePost } from "../services/PostService";
+import {
+  getMyPosts,
+  createPost,
+  deletePost,
+  updatePost,
+  createComment,
+  getCommentsOfPost,
+  deleteCommnet,
+  updateComment,
+} from "../services/PostService";
 import { Header } from "../components/Header";
 import DeleteIcon from "@mui/icons-material/Delete";
+
+interface Comment {
+  id: string;
+  content: string;
+  userId: string;
+  postedDate: string;
+  formattedPostedDate: string;
+}
 
 interface Post {
   id: string;
   avatarUrl: string;
-  username: string;
+  userId: string;
   formattedPostedDate: string;
   postedDate: string;
   content: string;
   images: string[];
+  comments: Comment[];
 }
 
 export const Home = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState(1);
+  const [commentPage, setCommentPage] = useState(1);
+  const [totalCommentPages, setTotalCommentPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
@@ -54,49 +74,54 @@ export const Home = () => {
   }, [navigate, page]);
 
   const loadPosts = useCallback(
-    (page: number) => {
+    async (page: number) => {
       setLoading(true);
-      getMyPosts(page)
-        .then((response) => {
-          setTotalPages(response.data.result.totalPages);
-          const transformedPosts = response.data.result.data.map(
-            (post: any) => {
-              if (post.user) {
-                return {
-                  avatarUrl: post.user.avatarUrl ?? "",
-                  username: post.user.username ?? "Unknown",
-                  id: post.id,
-                  formattedPostedDate: post.formattedPostedDate ?? "",
-                  postedDate: post.postedDate ?? "",
-                  content: post.content ?? "",
-                  images: post.images ?? [],
-                };
-              }
-              return {
-                id: post.id,
-                avatarUrl: "",
-                username: "Unknown",
-                formattedPostedDate: post.formattedPostedDate ?? "",
-                postedDate: post.postedDate ?? "",
-                content: post.content ?? "",
-                images: post.images ?? [],
-              };
-            }
-          );
-          setPosts((prevPosts) => [...prevPosts, ...transformedPosts]);
-          setHasMore(response.data.result.data.length > 0);
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 401) {
-            logOut();
-            navigate("/login");
-          } else {
-            console.error("An error occurred while fetching posts:", error);
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      try {
+        const response = await getMyPosts(page);
+        setTotalPages(response.data.result.totalPages);
+        const transformedPosts = await Promise.all(
+          response.data.result.data.map(async (post: any) => {
+            // Fetch comments for each post
+            const commentsResponse = await getCommentsOfPost(
+              post.id,
+              commentPage
+            );
+            setTotalCommentPages(commentsResponse.data.result.totalPages);
+            const comments = commentsResponse.data.result.data.map(
+              (comment: any) => ({
+                id: comment.id,
+                content: comment.content ?? "",
+                userId: comment.userId,
+                postedDate: comment.postedDate ?? "",
+                formattedPostedDate: comment.formattedPostedDate ?? "",
+              })
+            );
+
+            // Transform post data
+            return {
+              id: post.id,
+              avatarUrl: post.user?.avatarUrl ?? "",
+              userId: post.userId ?? "Unknown",
+              formattedPostedDate: post.formattedPostedDate ?? "",
+              postedDate: post.postedDate ?? "",
+              content: post.content ?? "",
+              images: post.images ?? [],
+              comments,
+            };
+          })
+        );
+        setPosts((prevPosts) => [...prevPosts, ...transformedPosts]);
+        setHasMore(response.data.result.data.length > 0);
+      } catch (error: any) {
+        if (error.response && error.response.status === 401) {
+          logOut();
+          navigate("/login");
+        } else {
+          console.error("An error occurred while fetching posts:", error);
+        }
+      } finally {
+        setLoading(false);
+      }
     },
     [navigate]
   );
@@ -219,7 +244,137 @@ export const Home = () => {
     } finally {
       setOpenSnackbar(true);
     }
-  }
+  };
+
+  const handleCreateComment = async (postId: string, content: string) => {
+    try {
+      const response = await createComment(postId, content);
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: [
+                  ...post.comments,
+                  {
+                    id: response.data.result.id,
+                    content: response.data.result.content,
+                    userId: response.data.result.userId,
+                    postedDate: response.data.result.postedDate,
+                    formattedPostedDate:
+                      response.data.result.formattedPostedDate,
+                  },
+                ],
+              }
+            : post
+        )
+      );
+      if (response) {
+        setSnackbarMessage("Comment posted");
+        setSnackbarSeverity("success");
+      } else {
+        setSnackbarMessage("Failed to create comment");
+        setSnackbarSeverity("error");
+      }
+    } catch (error) {
+      setSnackbarMessage("An error occurred");
+      setSnackbarSeverity("error");
+    } finally {
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleDeleteComment = async (postId: string, commentId: string) => {
+    try {
+      const response = await deleteCommnet(commentId);
+      if (response) {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  comments: post.comments.filter(
+                    (comment) => comment.id !== commentId
+                  ),
+                }
+              : post
+          )
+        );
+        setSnackbarMessage(response.data.message);
+        setSnackbarSeverity("success");
+      } else {
+        setSnackbarMessage("Failed to delete comment");
+        setSnackbarSeverity("error");
+      }
+    } catch (error) {
+      setSnackbarMessage("An error occurred");
+      setSnackbarSeverity("error");
+    } finally {
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleUpdateComment = async (
+    postId: string,
+    commentId: string,
+    content: string
+  ) => {
+    try {
+      const response = await updateComment(commentId, content);
+      if (response) {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  comments: post.comments.map((comment) =>
+                    comment.id === commentId
+                      ? {
+                          ...comment,
+                          content: content,
+                        }
+                      : comment
+                  ),
+                }
+              : post
+          )
+        );
+        setSnackbarMessage("Comment updated");
+        setSnackbarSeverity("success");
+      } else {
+        setSnackbarMessage("Failed to update comment");
+        setSnackbarSeverity("error");
+      }
+    } catch (error) {
+      setSnackbarMessage("An error occurred");
+      setSnackbarSeverity("error");
+    } finally {
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleLoadMoreComments = async (postId: string) => {
+    if (commentPage + 1 <= totalCommentPages) {
+      setCommentPage((prevPage) => {
+        const newPage = prevPage + 1;
+
+        getCommentsOfPost(postId, newPage).then((response) => {
+          setPosts((prevPosts) =>
+            prevPosts.map((post) =>
+              post.id === postId
+                ? {
+                    ...post,
+                    comments: [...post.comments, ...response.data.result.data],
+                  }
+                : post
+            )
+          );
+        });
+
+        return newPage;
+      });
+    }
+  };
 
   return (
     <>
@@ -384,12 +539,31 @@ export const Home = () => {
             </Box>
           </Box>
           {/* Posts List */}
-          <Typography sx={{ fontSize: 16, fontWeight: "bold", marginBottom: "10px" }}>
+          <Typography
+            sx={{ fontSize: 16, fontWeight: "bold", marginBottom: "10px" }}
+          >
             Posts
           </Typography>
 
           {posts.map((post) => (
-            <Post key={post.id} post={post} onDelete={() => handleDeletePost(post.id)} onUpdate={(id, updatedContent) => handleUpdatePost(id, updatedContent)} />
+            <Post
+              key={post.id}
+              post={post}
+              onDelete={() => handleDeletePost(post.id)}
+              onUpdate={(id, updatedContent) =>
+                handleUpdatePost(id, updatedContent)
+              }
+              onAddComment={(postId, commentContent) =>
+                handleCreateComment(postId, commentContent)
+              }
+              onUpdateComment={(postId, commentId, commentContent) =>
+                handleUpdateComment(postId, commentId, commentContent)
+              }
+              onDeleteComment={(postId, commentId) =>
+                handleDeleteComment(postId, commentId)
+              }
+              onLoadMoreComments={() => handleLoadMoreComments(post.id)}
+            />
           ))}
           {loading && (
             <div className="d-flex justify-content-center mt-4">
