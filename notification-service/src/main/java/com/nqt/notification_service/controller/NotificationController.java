@@ -21,7 +21,6 @@ public class NotificationController {
 
     @KafkaListener(topics = "notification-delivery")
     public void listenNotification(NotificationEvent message) {
-        log.info("Received notification: {}", message);
 
         mailService.sendMail(SendMailRequest.builder()
                 .to(message.getRecipients())

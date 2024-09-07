@@ -33,3 +33,8 @@ export const CODE = {
   SUCCESS: 1000,
   VERIFICATION_CODE_EXPIRED: 2801
 };
+
+export const ROLE = {
+  ADMIN: "ROLE_ADMIN",
+  USER: "ROLE_USER"
+};

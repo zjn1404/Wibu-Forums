@@ -59,6 +59,7 @@ export const isAuthenticated = () => {
 };
 
 export const refreshToken = async () => {
+  console.log('Refreshing token');
   const response = await HttpClient.post(API.REFRESH_TOKEN, {
     token: getRefreshToken(),
   });

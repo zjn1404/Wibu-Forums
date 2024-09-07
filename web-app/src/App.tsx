@@ -23,7 +23,7 @@ function App() {
           console.error("Error during initial token check:", error);
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
-          window.location.href = "/sign-in";
+          window.location.href = "/login";
         }
       }
     };
@@ -41,7 +41,7 @@ function App() {
           await refresh();
         }
       }
-    }, 30 * 60 * 1000); 
+    }, 10 * 60 * 1000); 
     
     return () => clearInterval(intervalId); 
   }, []);

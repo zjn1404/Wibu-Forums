@@ -436,19 +436,7 @@ export const Home = () => {
               }}
             />
             {/* Custom File Upload Button */}
-            <label
-              htmlFor="upload-button"
-              style={{
-                display: "inline-block",
-                backgroundColor: "#1b1e21",
-                color: "#fff",
-                padding: "8px 16px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                marginTop: "8px",
-                textAlign: "center",
-              }}
-            >
+            <label htmlFor="upload-button" className="custom-label">
               Add Image
             </label>
             <input
@@ -524,15 +512,7 @@ export const Home = () => {
               <button
                 onClick={handleCreatePost}
                 disabled={creatingPost}
-                style={{
-                  backgroundColor: "#1b1e21",
-                  color: "#fff",
-                  border: "none",
-                  padding: "8px 16px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  opacity: creatingPost ? 0.7 : 1,
-                }}
+                className="custom-button"
               >
                 {creatingPost ? "Posting..." : "Post"}
               </button>

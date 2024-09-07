@@ -29,7 +29,7 @@ export const refresh = async (): Promise<string> => {
     if (err.response && err.response.data.code === 1008) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      window.location.href = "/sign-in";
+      window.location.href = "/login";
     }
     failedRequestsQueue.forEach((callback) => callback(null));
     failedRequestsQueue = [];

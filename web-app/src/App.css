@@ -1,0 +1,38 @@
+/* styles.css or any relevant CSS file */
+.custom-button {
+  background-color: #1b1e21;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.custom-button:hover {
+  background-color: #3e4246;
+  border-color: #343a40;
+  color: #fff; 
+}
+
+.custom-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.custom-label {
+  display: inline-block;
+  background-color: #1b1e21;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  text-align: center;
+  transition: background-color 0.3s, border-color 0.3s; 
+}
+
+.custom-label:hover {
+  background-color: #3e4246;
+  color: #fff;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Avatar,
@@ -9,6 +9,9 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { ROLE } from "../configurations/Configuration";
+import { getAccessToken } from "../services/LocalStorageService";
+import { parseJwt } from "../services/AuthenticationConfig/auth";
 
 interface Comment {
   id: string;
@@ -59,6 +62,8 @@ export const Post: React.FC<{
   const [editedContent, setEditedContent] = useState(content);
   const [newComment, setNewComment] = useState("");
   const [isEditingComment, setIsEditingComment] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>("ROLE_USER");
+  const [jwtUserId, setJwtUserId] = useState<string>("");
   const [editedComment, setEditedComment] = useState<string>("");
 
   let formattedContent;
@@ -137,6 +142,33 @@ export const Post: React.FC<{
     }
   };
 
+  // auth.ts
+
+  useEffect(() => {
+    const accessToken = getAccessToken();
+
+    if (!accessToken) {
+      return () => {}; // Return an empty arrow function
+    }
+
+    const parsedToken = parseJwt(accessToken);
+
+    if (!parsedToken || !parsedToken.scope || !parsedToken.jti) {
+      return () => {}; // Return an empty arrow function
+    }
+
+    const roles = parsedToken.scope
+      .split(",")
+      .map((role: string) => role.trim())
+      .filter((role: string) => role.startsWith("ROLE_"));
+
+    const userId = parsedToken.jti;
+
+    setUserRole(roles[0]);
+    setJwtUserId(userId);
+    return () => {};
+  });
+
   return (
     <Box
       sx={{
@@ -159,43 +191,45 @@ export const Post: React.FC<{
         },
       }}
     >
-      <Box
-        className="action-buttons"
-        sx={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          display: "flex",
-          gap: 1,
-          opacity: 0,
-          transition: "opacity 0.3s",
-        }}
-      >
-        <IconButton
-          onClick={handleEdit}
+      {(userRole === ROLE.ADMIN || userId === jwtUserId) && (
+        <Box
+          className="action-buttons"
           sx={{
-            color: "#fff",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
-            },
+            position: "absolute",
+            top: 8,
+            right: 8,
+            display: "flex",
+            gap: 1,
+            opacity: 0,
+            transition: "opacity 0.3s",
           }}
         >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          onClick={handleDelete}
-          sx={{
-            color: "#fff",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
-            },
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Box>
+          <IconButton
+            onClick={handleEdit}
+            sx={{
+              color: "#fff",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+              },
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            onClick={handleDelete}
+            sx={{
+              color: "#fff",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+              },
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      )}
 
       <Avatar
         src={avatarUrl || `${process.env.PUBLIC_URL}/logo/logo.jpeg`}
@@ -344,49 +378,50 @@ export const Post: React.FC<{
               padding: "5px",
               borderBottom: "1px solid #eee",
               "&:hover .comment-action-buttons": {
-                opacity: 1,
+                opacity: 1, // Show buttons on hover
               },
             }}
           >
             {/* Action Buttons for Edit and Delete */}
-            <Box
-              className="comment-action-buttons"
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                display: "flex",
-                gap: 1,
-                opacity: 0, // Initially hidden
-                transition: "opacity 0.3s",
-              }}
-            >
-              <IconButton
-                onClick={() => handleEditComment(comment.id)}
+            {(userRole === "ROLE_ADMIN" || comment.userId === jwtUserId) && (
+              <Box
+                className="comment-action-buttons"
                 sx={{
-                  color: "#fff",
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                  },
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  display: "flex",
+                  gap: 1,
+                  opacity: 0, // Initially hidden
+                  transition: "opacity 0.3s", // Smooth transition
                 }}
               >
-                <EditIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                onClick={() => handleDeleteComment(id, comment.id)}
-                sx={{
-                  color: "#fff",
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                  },
-                }}
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Box>
-
+                <IconButton
+                  onClick={() => handleEditComment(comment.id)}
+                  sx={{
+                    color: "#fff",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    },
+                  }}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  onClick={() => handleDeleteComment(id, comment.id)}
+                  sx={{
+                    color: "#fff",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    },
+                  }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            )}
             {/* Display Comment Details */}
             {isEditingComment === comment.id ? (
               // If editing this comment
