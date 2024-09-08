@@ -34,4 +34,8 @@ public interface UserProfileRepository extends Neo4jRepository<UserProfile, Stri
             + "DELETE r "
             + "RETURN exists((u)-[:friend_of]-(f))")
     boolean unfriend(String userId, String friendId);
+
+    @Query("MATCH (u:user_profile {user_id: $userId}), (f:user_profile {user_id: $friendId}) "
+            + "RETURN EXISTS((u)-[:friend_of]-(f))")
+    boolean isFriendOf(String userId, String friendId);
 }

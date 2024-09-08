@@ -4,6 +4,8 @@ import { Alert, Snackbar } from "@mui/material";
 import { Header } from "../components/Header";
 import { changePassword } from "../services/AuthenticationService";
 import { sendVerificationCode } from "../services/VerifyService";
+import { UserProfile } from "../entity/UserProfile";
+import { getProfileFromLocalStorage } from "../services/LocalStorageService"; 
 
 export const Account: React.FC = () => {
   const [account, setAccount] = useState({
@@ -13,6 +15,7 @@ export const Account: React.FC = () => {
     newPassword: "",
   });
 
+  const [profile, setProfile] = useState<UserProfile>({} as UserProfile);
   const [verificationCode, setVerificationCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showVerificationButton, setShowVerificationButton] = useState(false);
@@ -22,6 +25,10 @@ export const Account: React.FC = () => {
     "success"
   );
 
+  useEffect(() => {
+    setProfile(getProfileFromLocalStorage())
+  }, []);
+  
   const handleCloseSnackBar = (event?: any, reason?: any) => {
     if (reason === "clickaway") return;
     setSnackBarOpen(false);
@@ -136,7 +143,7 @@ export const Account: React.FC = () => {
           {snackBarMessage}
         </Alert>
       </Snackbar>
-      <Header />
+      <Header user={profile}/>
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="container">
           <form onSubmit={handleUpdateAccount}>

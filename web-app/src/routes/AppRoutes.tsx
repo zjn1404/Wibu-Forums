@@ -7,6 +7,7 @@ import { RegisterSuccess } from "../pages/RegisterSuccess";
 import { VerificationCodeExpired } from "../pages/VerificationCodeExpired";
 import { Profile } from "../pages/Profile";
 import { Account } from "../pages/Account";
+import { MyPost } from "../pages/MyPost";
 
 export const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ export const AppRoutes = () => {
         <Route path="/verification-code-expired" Component={VerificationCodeExpired} />
         <Route path="/profile" Component={Profile} />
         <Route path="/account" Component={Account} />
+        <Route path="/my-posts" Component={MyPost} />
       </Routes>
     </Router>
   );

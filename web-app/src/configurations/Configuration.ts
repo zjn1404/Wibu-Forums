@@ -9,9 +9,12 @@ export const API = {
   MY_INFO: "/identity/users/my-info",
   UPDATE_MY_INFO: "/identity/users/my-info",
   MY_PROFILE: "/profile/users/my-profile",
+  IS_FRIEND: "/profile/users/is-friend",
   UPDATE_PROFILE: "/profile/users",
   CREATE_POST: "/post/create-post",
   MY_POSTS: "/post/my-posts",
+  FRIENDS_POSTS: "/post/friends-posts",
+  POST_BY_ID: "/post",
   DELETE_POST: "/post/delete-post",
   UPDATE_POST: "/post/update-post",
   CREATE_COMMENT: "post/comment",
@@ -20,21 +23,22 @@ export const API = {
   COMMENT_OF_POST: "post/comment",
   CHANGE_PASSWORD: "/identity/auth/change-password",
   SEND_VERIFICATION_CODE: "/identity/verify/send-verify-code",
-  REFRESH_TOKEN: "/identity/auth/refresh"
+  REFRESH_TOKEN: "/identity/auth/refresh",
 };
 
 export const OAUTHCONFIG = {
-  clientId: "60486252610-3lu1b07uuf5h2sokpsdikejp53cf1qsb.apps.googleusercontent.com",
+  clientId:
+    "60486252610-3lu1b07uuf5h2sokpsdikejp53cf1qsb.apps.googleusercontent.com",
   redirectUri: "http://localhost:3000/authenticate",
-  authUri: "https://accounts.google.com/o/oauth2/auth"
+  authUri: "https://accounts.google.com/o/oauth2/auth",
 };
 
 export const CODE = {
   SUCCESS: 1000,
-  VERIFICATION_CODE_EXPIRED: 2801
+  VERIFICATION_CODE_EXPIRED: 2801,
 };
 
 export const ROLE = {
   ADMIN: "ROLE_ADMIN",
-  USER: "ROLE_USER"
+  USER: "ROLE_USER",
 };

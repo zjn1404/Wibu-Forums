@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getMyProfile, updateProfile } from "../services/ProfileService";
+import { updateProfile } from "../services/ProfileService";
+import { getProfileFromLocalStorage } from "../services/LocalStorageService"; 
 import { Alert, Snackbar } from "@mui/material";
 import { Header } from "../components/Header";
+import { UserProfile } from "../entity/UserProfile";
 
 export const Profile: React.FC = () => {
-  const [profile, setProfile] = useState({
-    firstName: "",
-    lastName: "",
-    dob: "",
-    address: "",
-  });
-
+  const [profile, setProfile] = useState<UserProfile>({} as UserProfile);
   const [isLoading, setIsLoading] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
@@ -24,27 +19,16 @@ export const Profile: React.FC = () => {
     setSnackBarOpen(false);
   };
 
-  const getProfile = async () => {
-    try {
-      const response = await getMyProfile();
-      const data = response.data;
-
-      setProfile(data.result);
-    } catch (error) {
-      console.error("Failed to load profile", error);
-    }
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
     try {
       const response = await updateProfile(
-        profile.firstName,
-        profile.lastName,
-        new Date(Date.parse(profile.dob)),
-        profile.address
+        profile?.firstName ?? "",
+        profile?.lastName ?? "",
+        new Date(Date.parse(profile?.dob ?? "")),
+        profile?.address ?? ""
       );
 
       setSnackBarMessage("Profile updated successfully!");
@@ -62,7 +46,7 @@ export const Profile: React.FC = () => {
   };
 
   useEffect(() => {
-    getProfile();
+    setProfile(getProfileFromLocalStorage())
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +73,7 @@ export const Profile: React.FC = () => {
           {snackBarMessage}
         </Alert>
       </Snackbar>
-      <Header />
+      <Header user={profile}/>
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="container">
           <form onSubmit={handleSubmit}>
@@ -99,12 +83,16 @@ export const Profile: React.FC = () => {
                   <div className="card-body">
                     <h4 className="card-title text-center">Profile</h4>
                     <div className="mb-3">
+                      <label className="form-label">User Id</label>
+                      <p className="form-control">{profile?.userId}</p>
+                    </div>
+                    <div className="mb-3">
                       <label className="form-label">First Name</label>
                       <input
                         type="text"
                         name="firstName"
                         className="form-control"
-                        value={profile.firstName}
+                        value={profile?.firstName}
                         onChange={handleChange}
                       />
                     </div>
@@ -114,7 +102,7 @@ export const Profile: React.FC = () => {
                         type="text"
                         name="lastName"
                         className="form-control"
-                        value={profile.lastName}
+                        value={profile?.lastName}
                         onChange={handleChange}
                       />
                     </div>
@@ -124,7 +112,7 @@ export const Profile: React.FC = () => {
                         type="date"
                         name="dob"
                         className="form-control"
-                        value={profile.dob ? profile.dob.split("T")[0] : ""}
+                        value={profile?.dob ? profile.dob.split("T")[0] : ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -134,7 +122,7 @@ export const Profile: React.FC = () => {
                         type="text"
                         name="address"
                         className="form-control"
-                        value={profile.address}
+                        value={profile?.address}
                         onChange={handleChange}
                       />
                     </div>

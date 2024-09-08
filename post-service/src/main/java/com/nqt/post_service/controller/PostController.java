@@ -46,6 +46,25 @@ public class PostController {
                 .build();
     }
 
+    @GetMapping
+    public ApiResponse<PageResponse<PostResponse>> getPostsByUserId(
+            @RequestParam("userId") String userId,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
+        return ApiResponse.<PageResponse<PostResponse>>builder()
+                .result(postService.getPostByUserId(userId, currentPage, pageSize))
+                .build();
+    }
+
+    @GetMapping("/friends-posts")
+    public ApiResponse<PageResponse<PostResponse>> getFriendsPosts(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int pageSize) {
+        return ApiResponse.<PageResponse<PostResponse>>builder()
+                .result(postService.getFriendPosts(currentPage, pageSize))
+                .build();
+    }
+
     @PutMapping("/update-post/{postId}")
     public ApiResponse<PostResponse> updatePost(
             @PathVariable("postId") String postId, @RequestBody PostUpdateRequest request) {

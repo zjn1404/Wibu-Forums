@@ -108,6 +108,12 @@ public class UserProfileServiceImp implements UserProfileService {
     }
 
     @Override
+    public boolean isFriendOf(String friendId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userProfileRepository.isFriendOf(authentication.getName(), friendId);
+    }
+
+    @Override
     public boolean unfriend(String friendId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return !userProfileRepository.unfriend(authentication.getName(), friendId);

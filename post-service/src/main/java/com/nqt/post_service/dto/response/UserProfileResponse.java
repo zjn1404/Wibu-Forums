@@ -1,4 +1,4 @@
-package com.nqt.profile_service.dto.response;
+package com.nqt.post_service.dto.response;
 
 import java.util.Date;
 

@@ -31,3 +31,16 @@ export const updateProfile = async (
     }
   );
 };
+
+
+export const isFriend = async (friendId: string): Promise<any> => {
+  return await HttpClient.get(API.IS_FRIEND, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+    params: {
+      friendId: friendId,
+    }
+  });
+};
+

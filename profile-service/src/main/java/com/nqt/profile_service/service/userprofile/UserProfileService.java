@@ -23,5 +23,7 @@ public interface UserProfileService {
 
     PageResponse<UserProfileResponse> getAllFriends(int page, int size);
 
+    boolean isFriendOf(String friendId);
+
     boolean unfriend(String friendId);
 }

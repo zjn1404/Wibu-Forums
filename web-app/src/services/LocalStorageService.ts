@@ -1,3 +1,6 @@
+import { getMyProfile } from "./ProfileService";
+
+export const PROFILE = 'profile';
 export const ACCESS_TOKEN = "accessToken";
 export const REFRESH_TOKEN = "refreshToken";
 
@@ -23,4 +26,26 @@ export const removeAccessToken = () => {
 
 export const removeRefreshToken = () => {
   return localStorage.removeItem(REFRESH_TOKEN);
+};
+
+export const getProfileFromLocalStorage = () => {
+  const userProfileString = localStorage.getItem(PROFILE);
+    if (userProfileString) {
+      return JSON.parse(userProfileString);
+    }
+}
+
+export const removeProfileFromLocalStorage = () => {
+  localStorage.removeItem(PROFILE);
+}
+
+export const saveUserProfileInLocalStorage = async () => {
+  try {
+    const response = await getMyProfile();
+    const data = response.data;
+    
+    localStorage.setItem("profile", JSON.stringify(data.result));
+  } catch (error) {
+    console.error("Failed to load profile", error);
+  }
 };

@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { FaHome, FaUserFriends, FaEnvelope, FaBell } from "react-icons/fa";
 import { MdGroups } from "react-icons/md";
 import { logOut } from "../services/AuthenticationService";
+import { UserProfile } from "../entity/UserProfile";
 
 export const Header: React.FC<{
-  user?: any;
+  user?: UserProfile;
 }> = (props) => {
   const handleLogout = async (even: any) => {
     await logOut();
@@ -100,7 +101,7 @@ export const Header: React.FC<{
                   style={{ width: "32px", height: "32px" }}
                 />
                 {/* <span>{props.user.name}</span> */}
-                <span>User</span>
+                <span>{props.user?.firstName + " " + props.user?.lastName}</span>
               </a>
               <ul
                 className="dropdown-menu dropdown-menu-end"
@@ -112,12 +113,20 @@ export const Header: React.FC<{
                   </Link>
                 </li>
                 <li>
+                  <Link to="/my-posts" className="dropdown-item btn btn-dark">
+                    My Posts
+                  </Link>
+                </li>
+                <li>
                   <Link to="/account" className="dropdown-item btn btn-dark">
                     Account
                   </Link>
                 </li>
                 <li>
-                  <button className="dropdown-item btn btn-dark" onClick={handleLogout}>
+                  <button
+                    className="dropdown-item btn btn-dark"
+                    onClick={handleLogout}
+                  >
                     Logout
                   </button>
                 </li>

@@ -4,10 +4,11 @@ import { Snackbar, Alert } from "@mui/material";
 import { FaGoogle } from "react-icons/fa";
 import { isAuthenticated, logIn } from "../services/AuthenticationService";
 import { OAUTHCONFIG } from "../configurations/Configuration";
+import { saveUserProfileInLocalStorage } from "../services/LocalStorageService"; 
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const handleSignInWithGoogle = () => {
     const callbackUrl = OAUTHCONFIG.redirectUri;
     const authUrl = OAUTHCONFIG.authUri;
@@ -40,13 +41,18 @@ export const Login: React.FC = () => {
     event.preventDefault();
 
     try {
-      if (username == null || password == null || username.length == 0 || password.length == 0) {
+      if (
+        username == null ||
+        password == null ||
+        username.length === 0 ||
+        password.length === 0
+      ) {
         setSnackBarMessage("Username and password are required");
         setSnackBarOpen(true);
         return;
       }
       const response = await logIn(username, password);
-      console.log("Response body:", response.data);
+      saveUserProfileInLocalStorage();
       navigate("/");
     } catch (error: any) {
       const errorResponse = error.response.data;

@@ -10,6 +10,10 @@ public interface PostService {
 
     PageResponse<PostResponse> getMyPosts(int currentPage, int pageSize);
 
+    PageResponse<PostResponse> getPostByUserId(String userId, int currentPage, int pageSize);
+
+    PageResponse<PostResponse> getFriendPosts(int currentPage, int pageSize);
+
     PostResponse updatePost(String postId, PostUpdateRequest request);
 
     void deletePost(String postId);

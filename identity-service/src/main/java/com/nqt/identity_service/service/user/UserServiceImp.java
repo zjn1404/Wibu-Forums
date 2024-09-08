@@ -25,7 +25,7 @@ import com.nqt.identity_service.mapper.UserMapper;
 import com.nqt.identity_service.mapper.UserProfileMapper;
 import com.nqt.identity_service.repository.RoleRepository;
 import com.nqt.identity_service.repository.UserRepository;
-import com.nqt.identity_service.repository.profileservice.ProfileClient;
+import com.nqt.identity_service.repository.httpclient.ProfileClient;
 import com.nqt.identity_service.service.verifycode.VerifyCodeService;
 import com.nqt.identity_service.utils.Utils;
 

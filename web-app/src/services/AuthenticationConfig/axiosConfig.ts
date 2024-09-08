@@ -1,5 +1,5 @@
 import axios from "axios";
-import { refresh, parseJwt, decodeJwt } from "./auth"
+import { refresh, parseJwt } from "./auth"
 import { jwtDecode } from "jwt-decode";
 
 axios.interceptors.request.use(

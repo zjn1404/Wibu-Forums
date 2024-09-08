@@ -6,22 +6,16 @@ import {
   IconButton,
   Button,
   TextField,
+  Link,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { ROLE } from "../configurations/Configuration";
 import { getAccessToken } from "../services/LocalStorageService";
 import { parseJwt } from "../services/AuthenticationConfig/auth";
+import { Comment } from "../entity/Comment";
 
-interface Comment {
-  id: string;
-  content: string;
-  userId: string;
-  postedDate: string;
-  formattedPostedDate: string;
-}
-
-export const Post: React.FC<{
+export const DisplayedPost: React.FC<{
   post: {
     id: string;
     avatarUrl: string;
@@ -123,7 +117,7 @@ export const Post: React.FC<{
     await onDeleteComment(postId, id);
   };
 
-  const handleLoadMoreComments = async (postId: string, page: number) => {
+  const handleLoadMoreComments = async (postId: string) => {
     await onLoadMoreComments(postId);
   };
 
@@ -142,19 +136,17 @@ export const Post: React.FC<{
     }
   };
 
-  // auth.ts
-
   useEffect(() => {
     const accessToken = getAccessToken();
 
     if (!accessToken) {
-      return () => {}; // Return an empty arrow function
+      return () => {};
     }
 
     const parsedToken = parseJwt(accessToken);
 
     if (!parsedToken || !parsedToken.scope || !parsedToken.jti) {
-      return () => {}; // Return an empty arrow function
+      return () => {};
     }
 
     const roles = parsedToken.scope
@@ -162,10 +154,11 @@ export const Post: React.FC<{
       .map((role: string) => role.trim())
       .filter((role: string) => role.startsWith("ROLE_"));
 
-    const userId = parsedToken.jti;
+    const userId = parsedToken.sub;
 
     setUserRole(roles[0]);
     setJwtUserId(userId);
+    console.log(`roles: ${userRole}, userId: ${jwtUserId}`);
     return () => {};
   });
 
@@ -251,7 +244,7 @@ export const Post: React.FC<{
             width: "100%",
           }}
         >
-          <Typography
+          <Link
             sx={{
               fontSize: 16,
               fontWeight: 600,
@@ -259,10 +252,13 @@ export const Post: React.FC<{
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
+              cursor: "pointer",
+              textDecoration: "none",
+              color: "#1b1e21",
             }}
           >
             {userId}
-          </Typography>
+          </Link>
           <Typography
             sx={{
               fontSize: 13,
@@ -383,19 +379,20 @@ export const Post: React.FC<{
             }}
           >
             {/* Action Buttons for Edit and Delete */}
-            {(userRole === "ROLE_ADMIN" || comment.userId === jwtUserId) && (
-              <Box
-                className="comment-action-buttons"
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  display: "flex",
-                  gap: 1,
-                  opacity: 0, // Initially hidden
-                  transition: "opacity 0.3s", // Smooth transition
-                }}
-              >
+
+            <Box
+              className="comment-action-buttons"
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                display: "flex",
+                gap: 1,
+                opacity: 0, // Initially hidden
+                transition: "opacity 0.3s", // Smooth transition
+              }}
+            >
+              {(userRole === "ROLE_ADMIN" || comment.userId === jwtUserId) && (
                 <IconButton
                   onClick={() => handleEditComment(comment.id)}
                   sx={{
@@ -408,6 +405,8 @@ export const Post: React.FC<{
                 >
                   <EditIcon fontSize="small" />
                 </IconButton>
+              )}
+              {(userRole === "ROLE_ADMIN" || comment.userId === jwtUserId || userId === jwtUserId) && (
                 <IconButton
                   onClick={() => handleDeleteComment(id, comment.id)}
                   sx={{
@@ -420,8 +419,8 @@ export const Post: React.FC<{
                 >
                   <DeleteIcon fontSize="small" />
                 </IconButton>
-              </Box>
-            )}
+              )}
+            </Box>
             {/* Display Comment Details */}
             {isEditingComment === comment.id ? (
               // If editing this comment
@@ -474,9 +473,17 @@ export const Post: React.FC<{
             ) : (
               // If not editing, display the comment normally
               <>
-                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                <Link
+                  variant="body2"
+                  sx={{
+                    fontWeight: "bold",
+                    textDecoration: "none",
+                    color: "#1b1e21",
+                    cursor: "pointer",
+                  }}
+                >
                   {comment.userId}
-                </Typography>
+                </Link>
                 <Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
                   {comment.content}
                 </Typography>
@@ -493,7 +500,7 @@ export const Post: React.FC<{
         ))}
         <div className="text-center">
           <Button
-            onClick={() => handleLoadMoreComments(id, 1)}
+            onClick={() => handleLoadMoreComments(id)}
             sx={{
               color: "#1b1e21",
               textTransform: "none",

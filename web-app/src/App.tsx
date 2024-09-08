@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import './App.css';
-import { AppRoutes } from './routes/AppRoutes';
-import { parseJwt, refresh } from './services/AuthenticationConfig/auth';
+import React, { useEffect } from "react";
+import "./App.css";
+import { AppRoutes } from "./routes/AppRoutes";
+import { parseJwt, refresh } from "./services/AuthenticationConfig/auth";
 
 function App() {
-
   useEffect(() => {
     const checkToken = async () => {
       const accessToken = localStorage.getItem("accessToken");
@@ -41,9 +40,9 @@ function App() {
           await refresh();
         }
       }
-    }, 10 * 60 * 1000); 
-    
-    return () => clearInterval(intervalId); 
+    }, 10 * 60 * 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (

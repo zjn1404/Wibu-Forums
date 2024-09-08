@@ -71,6 +71,13 @@ public class UserProfileController {
                 .build();
     }
 
+    @GetMapping("/is-friend")
+    public ApiResponse<Boolean> isFriend(@RequestParam("friendId") String friendId) {
+        return ApiResponse.<Boolean>builder()
+                .result(userProfileService.isFriendOf(friendId))
+                .build();
+    }
+
     @PutMapping
     public ApiResponse<UserProfileResponse> updateMyProfile(@RequestBody UserProfileUpdateRequest request) {
         return ApiResponse.<UserProfileResponse>builder()

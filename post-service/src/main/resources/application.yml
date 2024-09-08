@@ -15,6 +15,11 @@ spring:
       max-file-size: 256MB
       max-request-size: 256MB
 
+app:
+  services:
+    profile:
+      url: "http://localhost:8081/profile"
+
 message:
   controller:
     post:
