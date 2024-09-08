@@ -9,3 +9,11 @@ spring:
       username: neo4j
       password: admin123
 
+message:
+  controller:
+    user-profile:
+      add-friend-success: "Add friend successfully"
+      add-friend-fail: "Can't add friend"
+      unfriend-success: "Unfriend successfully"
+      unfriend-fail: "Can't unfriend"
+
