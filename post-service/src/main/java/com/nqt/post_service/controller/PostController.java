@@ -46,7 +46,7 @@ public class PostController {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping("/get-by-user-id")
     public ApiResponse<PageResponse<PostResponse>> getPostsByUserId(
             @RequestParam("userId") String userId,
             @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,

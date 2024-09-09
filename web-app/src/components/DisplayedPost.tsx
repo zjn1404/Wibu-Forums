@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Avatar,
@@ -223,11 +224,6 @@ export const DisplayedPost: React.FC<{
           </IconButton>
         </Box>
       )}
-
-      <Avatar
-        src={avatarUrl || `${process.env.PUBLIC_URL}/logo/logo.jpeg`}
-        sx={{ marginRight: 2, width: 56, height: 56 }}
-      />
       <Box
         sx={{
           flex: 1,
@@ -245,33 +241,31 @@ export const DisplayedPost: React.FC<{
           }}
         >
           <Link
+            component={RouterLink}
+            to={userId === jwtUserId ? 'profile' : `/user/${userId}`}
+            variant="body2"
             sx={{
               fontSize: 16,
               fontWeight: 600,
-              marginBottom: "4px",
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
               cursor: "pointer",
               textDecoration: "none",
               color: "#1b1e21",
+              display: "flex",
+              alignItems: "center",
             }}
           >
+            <Avatar
+              src={avatarUrl || ""}
+              sx={{ marginRight: 2, width: 56, height: 56 }}
+            />
             {userId}
           </Link>
-          <Typography
-            sx={{
-              fontSize: 13,
-              color: "gray",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {formattedPostedDate}
-          </Typography>
         </Box>
 
+        <div>
         {isEditing ? (
           <>
             <TextField
@@ -333,6 +327,18 @@ export const DisplayedPost: React.FC<{
             {formattedContent}
           </Typography>
         )}
+        <Typography
+          sx={{
+            fontSize: 13,
+            color: "gray",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {formattedPostedDate}
+        </Typography>
+        </div>
 
         {images.length > 0 && (
           <Box
@@ -406,7 +412,9 @@ export const DisplayedPost: React.FC<{
                   <EditIcon fontSize="small" />
                 </IconButton>
               )}
-              {(userRole === "ROLE_ADMIN" || comment.userId === jwtUserId || userId === jwtUserId) && (
+              {(userRole === "ROLE_ADMIN" ||
+                comment.userId === jwtUserId ||
+                userId === jwtUserId) && (
                 <IconButton
                   onClick={() => handleDeleteComment(id, comment.id)}
                   sx={{
@@ -474,14 +482,23 @@ export const DisplayedPost: React.FC<{
               // If not editing, display the comment normally
               <>
                 <Link
+                  component={RouterLink}
+                  to={comment.userId === jwtUserId ? '/profile' : `/user/${comment.userId}`}
                   variant="body2"
                   sx={{
                     fontWeight: "bold",
                     textDecoration: "none",
                     color: "#1b1e21",
                     cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "10px",
                   }}
                 >
+                  <Avatar
+                    src={avatarUrl || ""}
+                    sx={{ marginRight: 2, width: 30, height: 30 }}
+                  />
                   {comment.userId}
                 </Link>
                 <Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>

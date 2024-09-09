@@ -23,6 +23,19 @@ export const getMyPosts = async (page: any) => {
   });
 };
 
+export const getPostById = async (userId: string, page: number) => {
+  return await HttpClient.get(API.POST_BY_USER_ID, {
+    params: {
+      userId: userId,
+      page: page,
+      size: 10
+    },
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
+};
+
 export const getFriendsPosts = async (page: any) => {
   return await HttpClient.get(API.FRIENDS_POSTS, {
     headers: {

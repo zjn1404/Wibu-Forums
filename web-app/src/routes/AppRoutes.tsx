@@ -8,6 +8,10 @@ import { VerificationCodeExpired } from "../pages/VerificationCodeExpired";
 import { Profile } from "../pages/Profile";
 import { Account } from "../pages/Account";
 import { MyPost } from "../pages/MyPost";
+import { ReadOnlyProfile } from "../pages/ReadOnlyProfile";
+import { UserPosts } from "../pages/UserPosts";
+import { UserFeatures } from "../pages/UserFeatures";
+import { Friends } from "../pages/Friends";
 
 export const AppRoutes = () => {
   return (
@@ -20,8 +24,12 @@ export const AppRoutes = () => {
         <Route path="/register-success" Component={RegisterSuccess} />
         <Route path="/verification-code-expired" Component={VerificationCodeExpired} />
         <Route path="/profile" Component={Profile} />
+        <Route path="/profile/:userId" Component={ReadOnlyProfile} />
         <Route path="/account" Component={Account} />
         <Route path="/my-posts" Component={MyPost} />
+        <Route path="/post/:userId" Component={UserPosts} />
+        <Route path="/user/:userId" Component={UserFeatures} />
+        <Route path="/friends" Component={Friends} />
       </Routes>
     </Router>
   );

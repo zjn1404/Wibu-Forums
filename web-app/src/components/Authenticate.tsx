@@ -7,7 +7,6 @@ import {
 } from "../services/LocalStorageService";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import axios from "axios";
-import { getProfileFromLocalStorage } from "../services/LocalStorageService"; 
 
 export default function Authenticate() {
   const navigate = useNavigate();

@@ -76,6 +76,13 @@ public class UserProfileServiceImp implements UserProfileService {
     }
 
     @Override
+    public UserProfileResponse getProfileByUserId(String userId) {
+        return userProfileMapper.toUserProfileResponse(userProfileRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_PROFILE_NOT_FOUND)));
+    }
+
+    @Override
     public List<UserProfileResponse> getAllProfiles() {
         return userProfileRepository.findAll().stream()
                 .map(userProfileMapper::toUserProfileResponse)

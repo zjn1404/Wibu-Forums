@@ -19,6 +19,8 @@ public interface UserProfileService {
 
     UserProfileResponse getMyProfile();
 
+    UserProfileResponse getProfileByUserId(String userId);
+
     List<UserProfileResponse> getAllProfiles();
 
     PageResponse<UserProfileResponse> getAllFriends(int page, int size);

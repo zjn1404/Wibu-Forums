@@ -4,6 +4,7 @@ import { FaHome, FaUserFriends, FaEnvelope, FaBell } from "react-icons/fa";
 import { MdGroups } from "react-icons/md";
 import { logOut } from "../services/AuthenticationService";
 import { UserProfile } from "../entity/UserProfile";
+import { Avatar } from "@mui/material";
 
 export const Header: React.FC<{
   user?: UserProfile;
@@ -93,14 +94,12 @@ export const Header: React.FC<{
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <img
+                <Avatar
                   // src={props.user.avatarUrl}
-                  src="/logo/logo.jpeg"
                   alt="User Avatar"
                   className="rounded-circle me-2"
                   style={{ width: "32px", height: "32px" }}
                 />
-                {/* <span>{props.user.name}</span> */}
                 <span>{props.user?.firstName + " " + props.user?.lastName}</span>
               </a>
               <ul
