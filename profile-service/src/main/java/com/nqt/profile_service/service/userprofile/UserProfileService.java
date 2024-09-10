@@ -25,6 +25,8 @@ public interface UserProfileService {
 
     PageResponse<UserProfileResponse> getAllFriends(int page, int size);
 
+    List<UserProfileResponse> getAllFriends();
+
     boolean isFriendOf(String friendId);
 
     boolean unfriend(String friendId);

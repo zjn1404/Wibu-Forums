@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nqt.notification_service.dto.request.SendMailRequest;
 import com.nqt.notification_service.dto.response.ApiResponse;
 import com.nqt.notification_service.dto.response.MailResponse;
-import com.nqt.notification_service.service.MailService;
+import com.nqt.notification_service.service.mail.MailService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

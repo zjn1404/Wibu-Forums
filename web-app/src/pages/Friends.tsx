@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { UserProfile } from "../entity/UserProfile";
 import { getFriends } from "../services/ProfileService";
 import { Link as RouterLink } from "react-router-dom";
-import { Avatar, Box, Link, CircularProgress, Typography, Card } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Link,
+  CircularProgress,
+  Typography,
+  Card,
+} from "@mui/material";
 import { Header } from "../components/Header";
 import { getProfileFromLocalStorage } from "../services/LocalStorageService";
 

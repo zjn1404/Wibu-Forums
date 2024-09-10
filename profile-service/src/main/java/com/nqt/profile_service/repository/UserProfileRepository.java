@@ -1,5 +1,6 @@
 package com.nqt.profile_service.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -29,6 +30,10 @@ public interface UserProfileRepository extends Neo4jRepository<UserProfile, Stri
                     + "SKIP $skip LIMIT $limit",
             countQuery = "MATCH (u:user_profile {user_id: $userId})-[:friend_of]-(f:user_profile) " + "RETURN count(f)")
     Page<UserProfile> findAllFriends(String userId, Pageable pageable);
+
+    @Query("MATCH (u:user_profile {user_id: $userId})-[:friend_of]-(f:user_profile) " +
+            "RETURN f")
+    List<UserProfile> findAllFriendsByUserId(String userId);
 
     @Query("MATCH (u:user_profile {user_id: $userId})-[r:friend_of]-(f:user_profile {user_id: $friendId}) "
             + "DELETE r "

@@ -1,6 +1,7 @@
 package com.nqt.profile_service.service.userprofile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -106,6 +107,14 @@ public class UserProfileServiceImp implements UserProfileService {
                         .map(userProfileMapper::toUserProfileResponse)
                         .toList())
                 .build();
+    }
+
+    @Override
+    public List<UserProfileResponse> getAllFriends() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return userProfileRepository.findAllFriendsByUserId(authentication.getName())
+                .stream().map(userProfileMapper::toUserProfileResponse).collect(Collectors.toList());
     }
 
     @Override

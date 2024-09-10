@@ -3,6 +3,11 @@ package com.nqt.post_service.service.comment;
 import java.util.Date;
 import java.util.List;
 
+import com.nqt.event.dto.Recipient;
+import com.nqt.event.notification.NotificationType;
+import com.nqt.post_service.dto.response.UserProfileResponse;
+import com.nqt.post_service.repository.httpclient.ProfileClient;
+import com.nqt.post_service.service.kafka.KafkaProduceService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,9 +40,13 @@ public class CommentServiceImp implements CommentService {
     CommentRepository commentRepository;
     PostRepository postRepository;
 
+    ProfileClient profileClient;
+
     CommentMapper commentMapper;
 
     DateFormatter dateFormatter;
+
+    KafkaProduceService kafkaProduceService;
 
     @Override
     public CommentResponse createComment(CommentCreationRequest request) {
@@ -46,6 +55,7 @@ public class CommentServiceImp implements CommentService {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserProfileResponse userProfile = profileClient.getByUserId(authentication.getName()).getResult();
 
         Comment comment = Comment.builder()
                 .userId(authentication.getName())
@@ -59,6 +69,15 @@ public class CommentServiceImp implements CommentService {
 
         CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
         commentResponse.setFormattedPostedDate(dateFormatter.format(commentResponse.getModifiedDate()));
+
+        Recipient recipient = Recipient.builder()
+                .userId(userProfile.getUserId())
+                .name(String.format("%s %s", userProfile.getFirstName(), userProfile.getLastName()))
+                .build();
+
+        String body = userProfile.getFirstName() + " " + userProfile.getLastName() + NotificationType.CREATE_COMMENT.getBody();
+
+        kafkaProduceService.sendNotification(NotificationType.CREATE_COMMENT, List.of(recipient), body);
 
         return commentResponse;
     }
@@ -105,4 +124,5 @@ public class CommentServiceImp implements CommentService {
     public void deleteComment(String commentId) {
         commentRepository.deleteById(commentId);
     }
+
 }

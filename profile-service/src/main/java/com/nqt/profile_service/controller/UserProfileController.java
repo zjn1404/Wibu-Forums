@@ -71,6 +71,13 @@ public class UserProfileController {
                 .build();
     }
 
+    @GetMapping("/get-all-friends")
+    public ApiResponse<List<UserProfileResponse>> getAllFriends() {
+        return ApiResponse.<List<UserProfileResponse>>builder()
+                .result(userProfileService.getAllFriends())
+                .build();
+    }
+
     @GetMapping("get-by-user-id")
     public ApiResponse<UserProfileResponse> getUserProfileByUserId(@RequestParam("userId") String userId) {
         return ApiResponse.<UserProfileResponse>builder()

@@ -73,3 +73,6 @@ app:
       url: http://localhost:8081/profile
   verify-code:
     valid-duration: 300
+  kafka:
+    topics:
+      verification-mail: "verification-mail"

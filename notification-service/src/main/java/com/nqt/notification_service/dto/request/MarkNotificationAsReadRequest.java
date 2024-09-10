@@ -1,15 +1,15 @@
-package com.nqt.event.dto;
+package com.nqt.notification_service.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Recipient {
-    String userId;
-    String name;
-    String email;
+public class MarkNotificationAsReadRequest {
+    List<String> notificationIds;
 }

@@ -8,6 +8,11 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:root@localhost:27017/post-service?authSource=admin
+  kafka:
+      bootstrap-servers: localhost:9094
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
   servlet:
     multipart:
@@ -19,6 +24,9 @@ app:
   services:
     profile:
       url: "http://localhost:8081/profile"
+  kafka:
+    topics:
+      notification: "notification"
 
 message:
   controller:

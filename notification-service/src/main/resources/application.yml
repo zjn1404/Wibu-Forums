@@ -25,3 +25,12 @@ app:
     sender:
       name: "Wibu Forums Team"
       email: nqt460@gmail.com
+  kafka:
+    topics:
+      verification-mail: "verification-mail"
+      notification: "notification"
+
+message:
+  controller:
+    notification:
+      mark-as-read-success: "Has marked the notification as read!"

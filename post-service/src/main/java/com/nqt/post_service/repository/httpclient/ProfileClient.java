@@ -10,6 +10,8 @@ import com.nqt.post_service.dto.response.ApiResponse;
 import com.nqt.post_service.dto.response.PageResponse;
 import com.nqt.post_service.dto.response.UserProfileResponse;
 
+import java.util.List;
+
 @FeignClient(
         name = "profile-service",
         url = "${app.services.profile.url}",
@@ -19,4 +21,10 @@ public interface ProfileClient {
     ApiResponse<PageResponse<UserProfileResponse>> getFriends(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size);
+
+    @GetMapping(value = "/users/get-by-user-id", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<UserProfileResponse> getByUserId(@RequestParam("userId") String userId);
+
+    @GetMapping(value = "/users/get-all-friends", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<List<UserProfileResponse>> getAllFriends();
 }
