@@ -159,7 +159,6 @@ export const DisplayedPost: React.FC<{
 
     setUserRole(roles[0]);
     setJwtUserId(userId);
-    console.log(`roles: ${userRole}, userId: ${jwtUserId}`);
     return () => {};
   });
 

@@ -1,13 +1,14 @@
 package com.nqt.notification_service.entity;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import java.util.Date;
+import java.util.Map;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.util.Date;
-import java.util.Map;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Document("notification")
 @Getter
@@ -27,8 +28,11 @@ public class Notification {
     @Field("subject")
     String subject;
 
-    @Field("recipients")
+    @Field("recipients_read_status")
     Map<String, Boolean> recipientsReadStatus;
+
+    @Field("component_id")
+    String componentId;
 
     @Field("body")
     String body;

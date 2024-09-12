@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import "./App.css";
 import { AppRoutes } from "./routes/AppRoutes";
 import { parseJwt, refresh } from "./services/AuthenticationConfig/auth";
+import { NotificationProvider } from "./components/NotificationContext";
 
 function App() {
   useEffect(() => {
@@ -47,7 +48,9 @@ function App() {
 
   return (
     <>
-      <AppRoutes />
+      <NotificationProvider>
+        <AppRoutes />
+      </NotificationProvider>
     </>
   );
 }

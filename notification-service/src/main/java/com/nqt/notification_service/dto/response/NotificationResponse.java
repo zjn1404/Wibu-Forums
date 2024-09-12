@@ -17,6 +17,8 @@ public class NotificationResponse {
 
     String subject;
 
+    String componentId;
+
     String body;
 
     String formatedCreatedDate;

@@ -1,18 +1,10 @@
 package com.nqt.notification_service.service.notification;
 
-import com.nqt.event.dto.NotificationEvent;
-import com.nqt.event.dto.Recipient;
-import com.nqt.notification_service.dto.request.MarkNotificationAsReadRequest;
-import com.nqt.notification_service.dto.response.NotificationResponse;
-import com.nqt.notification_service.dto.response.PageResponse;
-import com.nqt.notification_service.entity.Notification;
-import com.nqt.notification_service.mapper.NotificationMapper;
-import com.nqt.notification_service.repository.NotificationRepository;
-import com.nqt.notification_service.utils.formatter.DateFormatter;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,18 +14,30 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.nqt.event.dto.NotificationEvent;
+import com.nqt.event.dto.Recipient;
+import com.nqt.notification_service.dto.request.MarkNotificationAsReadRequest;
+import com.nqt.notification_service.dto.response.NotificationResponse;
+import com.nqt.notification_service.dto.response.PageResponse;
+import com.nqt.notification_service.entity.Notification;
+import com.nqt.notification_service.mapper.NotificationMapper;
+import com.nqt.notification_service.repository.NotificationRepository;
+import com.nqt.notification_service.utils.formatter.DateFormatter;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class NotificationServiceImp implements NotificationService{
+public class NotificationServiceImp implements NotificationService {
 
     @NonFinal
-    String defaultSortProperty = "createdDate";
+    String defaultSortProperty = "created_date";
 
     NotificationRepository notificationRepository;
 
@@ -45,14 +49,16 @@ public class NotificationServiceImp implements NotificationService{
 
     @Override
     public void processNotification(NotificationEvent notificationEvent) {
-
         Notification notification = notificationMapper.toNotification(notificationEvent);
         notification.setRecipientsReadStatus(buildRecipientsReadStatus(notificationEvent.getRecipients()));
         notification.setCreatedDate(new Date());
         notificationRepository.save(notification);
 
+        NotificationResponse notificationResponse = notificationMapper.toNotificationResponse(notification);
+        notificationResponse.setFormatedCreatedDate(dateFormatter.format(notification.getCreatedDate()));
+
         for (Recipient recipient : notificationEvent.getRecipients()) {
-            messagingTemplate.convertAndSendToUser(recipient.getUserId(), "/queue/notifications", notificationEvent);
+            messagingTemplate.convertAndSendToUser(recipient.getUserId(), "/queue/notifications", notificationResponse);
         }
     }
 
@@ -71,15 +77,17 @@ public class NotificationServiceImp implements NotificationService{
     public PageResponse<NotificationResponse> findAllUnreadNotifications(int page, int size) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Sort sort = Sort.by(Sort.Direction.DESC, defaultSortProperty);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Notification> notifications = notificationRepository
-                .findAllUnreadNotifications(authentication.getName(), pageable);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Page<Notification> notifications =
+                notificationRepository.findAllUnreadNotifications(authentication.getName(), pageable);
 
-        List<NotificationResponse> notificationResponses = notifications.map(notification -> {
-            NotificationResponse notificationResponse = notificationMapper.toNotificationResponse(notification);
-            notificationResponse.setFormatedCreatedDate(dateFormatter.format(notification.getCreatedDate()));
-            return notificationResponse;
-        }).toList();
+        List<NotificationResponse> notificationResponses = notifications.getContent().stream()
+                .map(notification -> {
+                    NotificationResponse notificationResponse = notificationMapper.toNotificationResponse(notification);
+                    notificationResponse.setFormatedCreatedDate(dateFormatter.format(notification.getCreatedDate()));
+                    return notificationResponse;
+                })
+                .toList();
 
         return PageResponse.<NotificationResponse>builder()
                 .currentPage(page)

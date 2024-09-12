@@ -1,23 +1,23 @@
 package com.nqt.notification_service.controller;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.web.bind.annotation.*;
+
+import com.nqt.event.dto.NotificationEvent;
 import com.nqt.notification_service.dto.request.MarkNotificationAsReadRequest;
+import com.nqt.notification_service.dto.request.SendMailRequest;
 import com.nqt.notification_service.dto.response.ApiResponse;
 import com.nqt.notification_service.dto.response.NotificationResponse;
 import com.nqt.notification_service.dto.response.PageResponse;
-import com.nqt.notification_service.service.notification.NotificationService;
-import lombok.experimental.NonFinal;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
-
-import com.nqt.event.dto.NotificationEvent;
-import com.nqt.notification_service.dto.request.SendMailRequest;
 import com.nqt.notification_service.service.mail.MailService;
+import com.nqt.notification_service.service.notification.NotificationService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -51,8 +51,7 @@ public class NotificationController {
     @GetMapping("/unread-notifications")
     public ApiResponse<PageResponse<NotificationResponse>> getUnreadNotifications(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "5") int size
-    ) {
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size) {
         return ApiResponse.<PageResponse<NotificationResponse>>builder()
                 .result(notificationService.findAllUnreadNotifications(page, size))
                 .build();
@@ -62,8 +61,6 @@ public class NotificationController {
     public ApiResponse<Void> markAsRead(@RequestBody MarkNotificationAsReadRequest request) {
         notificationService.markNotificationAsRead(request);
 
-        return ApiResponse.<Void>builder()
-                .message(markAsReadSuccessMessage)
-                .build();
+        return ApiResponse.<Void>builder().message(markAsReadSuccessMessage).build();
     }
 }

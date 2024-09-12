@@ -5,8 +5,7 @@ import lombok.Getter;
 @Getter
 public enum NotificationType {
     CREATE_POST("POST", "CREATE POST", "A new post has been created by "),
-    CREATE_COMMENT("COMMENT", "CREATE COMMENT", " has commented on your post")
-    ;
+    CREATE_COMMENT("COMMENT", "CREATE COMMENT", " has commented on your post");
 
     final String channel;
     final String subject;
@@ -17,5 +16,4 @@ public enum NotificationType {
         this.subject = subject;
         this.body = body;
     }
-
 }

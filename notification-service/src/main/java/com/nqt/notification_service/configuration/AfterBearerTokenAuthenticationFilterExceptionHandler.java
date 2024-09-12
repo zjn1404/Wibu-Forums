@@ -14,6 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nqt.notification_service.dto.response.ApiResponse;
 import com.nqt.notification_service.exception.ErrorCode;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class AfterBearerTokenAuthenticationFilterExceptionHandler extends OncePerRequestFilter {
 
@@ -23,6 +26,7 @@ public class AfterBearerTokenAuthenticationFilterExceptionHandler extends OncePe
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+
             ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
             response.setStatus(errorCode.getHttpStatus().value());

@@ -31,8 +31,7 @@ public interface UserProfileRepository extends Neo4jRepository<UserProfile, Stri
             countQuery = "MATCH (u:user_profile {user_id: $userId})-[:friend_of]-(f:user_profile) " + "RETURN count(f)")
     Page<UserProfile> findAllFriends(String userId, Pageable pageable);
 
-    @Query("MATCH (u:user_profile {user_id: $userId})-[:friend_of]-(f:user_profile) " +
-            "RETURN f")
+    @Query("MATCH (u:user_profile {user_id: $userId})-[:friend_of]-(f:user_profile) " + "RETURN f")
     List<UserProfile> findAllFriendsByUserId(String userId);
 
     @Query("MATCH (u:user_profile {user_id: $userId})-[r:friend_of]-(f:user_profile {user_id: $friendId}) "

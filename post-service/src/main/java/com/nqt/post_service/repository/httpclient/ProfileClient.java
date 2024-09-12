@@ -1,5 +1,7 @@
 package com.nqt.post_service.repository.httpclient;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +11,6 @@ import com.nqt.post_service.configuration.AuthenticationRequestInterceptor;
 import com.nqt.post_service.dto.response.ApiResponse;
 import com.nqt.post_service.dto.response.PageResponse;
 import com.nqt.post_service.dto.response.UserProfileResponse;
-
-import java.util.List;
 
 @FeignClient(
         name = "profile-service",

@@ -15,5 +15,6 @@ public class NotificationEvent {
     String channel;
     List<Recipient> recipients;
     String subject;
+    String componentId;
     String body;
 }

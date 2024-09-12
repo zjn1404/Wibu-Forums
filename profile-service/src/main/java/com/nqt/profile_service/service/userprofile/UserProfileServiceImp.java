@@ -1,7 +1,6 @@
 package com.nqt.profile_service.service.userprofile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -113,10 +112,16 @@ public class UserProfileServiceImp implements UserProfileService {
     public List<UserProfileResponse> getAllFriends() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return userProfileRepository.findAllFriendsByUserId(authentication.getName())
-                .stream().map(userProfileMapper::toUserProfileResponse).collect(Collectors.toList());
+        return userProfileRepository.findAllFriendsByUserId(authentication.getName()).stream()
+                .map(userProfileMapper::toUserProfileResponse)
+                .toList();
     }
 
+    // TODO: implement addFriend feature
+    // Send add friend request to notification-service
+    // Save friend request in notification-service
+    // Receive add friend response and send to notification-service to update status and notify to user
+    // content in notification event is "true" or "false"
     @Override
     public boolean addFriend(String friendId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

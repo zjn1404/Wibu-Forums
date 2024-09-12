@@ -1,10 +1,10 @@
 package com.nqt.notification_service.dto.response;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.Collections;
 import java.util.List;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Builder

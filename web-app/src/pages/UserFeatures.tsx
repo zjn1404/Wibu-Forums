@@ -102,7 +102,7 @@ export const UserFeatures = () => {
             </Button>
             <Button
               variant="outlined"
-              onClick={() => navigate(`/post/${userId}`)}
+              onClick={() => navigate(`/post/user/${userId}`)}
               sx={{
                 width: "100%",
                 marginBottom: 2,

@@ -8,6 +8,8 @@ import com.nqt.post_service.dto.response.PostResponse;
 public interface PostService {
     PostResponse createPost(PostRequest request);
 
+    PageResponse<PostResponse> getPostById(String postId);
+
     PageResponse<PostResponse> getMyPosts(int currentPage, int pageSize);
 
     PageResponse<PostResponse> getPostByUserId(String userId, int currentPage, int pageSize);

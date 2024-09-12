@@ -1,15 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaHome, FaUserFriends, FaEnvelope, FaBell } from "react-icons/fa";
+import { FaHome, FaUserFriends, FaComments, FaBell } from "react-icons/fa";
 import { MdGroups } from "react-icons/md";
 import { logOut } from "../services/AuthenticationService";
 import { UserProfile } from "../entity/UserProfile";
 import { Avatar } from "@mui/material";
+import { fetchUnreadNotifications } from "../services/NotificationService";
 
 export const Header: React.FC<{
   user?: UserProfile;
 }> = (props) => {
-  const handleLogout = async (even: any) => {
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+
+  useEffect(() => {
+    const checkUnreadNotifications = async () => {
+      try {
+        const unreadNotifications = await fetchUnreadNotifications();
+        if (unreadNotifications && unreadNotifications.length > 0) {
+          setHasUnreadNotifications(true);
+        } else {
+          setHasUnreadNotifications(false);
+        }
+      } catch (error) {
+        console.error("Error fetching unread notifications:", error);
+        setHasUnreadNotifications(false);
+      }
+    };
+
+    // Call the function immediately to check for notifications on mount
+    checkUnreadNotifications();
+
+    // Set up an interval to periodically check for new notifications
+    const interval = setInterval(checkUnreadNotifications, 5000); // Check every 5 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleLogout = async (event: any) => {
     await logOut();
     window.location.href = "/login";
   };
@@ -71,7 +99,7 @@ export const Header: React.FC<{
             </li>
             <li className="nav-item">
               <Link to="/messages" className="nav-link text-white ms-5 me-5">
-                <FaEnvelope size={24} />
+                <FaComments size={24} />
               </Link>
             </li>
             <li className="nav-item">
@@ -79,7 +107,10 @@ export const Header: React.FC<{
                 to="/notifications"
                 className="nav-link text-white ms-5 me-5"
               >
-                <FaBell size={24} />
+                <FaBell
+                  size={24}
+                  color={hasUnreadNotifications ? "#3194bb" : "white"}
+                />
               </Link>
             </li>
           </ul>
@@ -95,12 +126,13 @@ export const Header: React.FC<{
                 aria-expanded="false"
               >
                 <Avatar
-                  // src={props.user.avatarUrl}
                   alt="User Avatar"
                   className="rounded-circle me-2"
                   style={{ width: "32px", height: "32px" }}
                 />
-                <span>{props.user?.firstName + " " + props.user?.lastName}</span>
+                <span>
+                  {props.user?.firstName + " " + props.user?.lastName}
+                </span>
               </a>
               <ul
                 className="dropdown-menu dropdown-menu-end"

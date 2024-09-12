@@ -19,15 +19,19 @@ export const API = {
   MY_POSTS: "/post/my-posts",
   FRIENDS_POSTS: "/post/friends-posts",
   POST_BY_USER_ID: "/post/get-by-user-id",
+  GET_POST_BY_ID: "/post/get-by-id",
   DELETE_POST: "/post/delete-post",
   UPDATE_POST: "/post/update-post",
-  CREATE_COMMENT: "post/comment",
-  UPDATE_COMMENT: "post/comment",
-  DELETE_COMMENT: "post/comment",
-  COMMENT_OF_POST: "post/comment",
+  CREATE_COMMENT: "/post/comment",
+  UPDATE_COMMENT: "/post/comment",
+  DELETE_COMMENT: "/post/comment",
+  COMMENT_OF_POST: "/post/comment",
   CHANGE_PASSWORD: "/identity/auth/change-password",
   SEND_VERIFICATION_CODE: "/identity/verify/send-verify-code",
   REFRESH_TOKEN: "/identity/auth/refresh",
+  NOTIFICATION_SOCKET: "/notification/ws",
+  UNREAD_NOTIFICATIONS: "/notification/unread-notifications",
+  MARK_AS_READ: "/notification/mark-as-read",
 };
 
 export const OAUTHCONFIG = {
@@ -46,3 +50,8 @@ export const ROLE = {
   ADMIN: "ROLE_ADMIN",
   USER: "ROLE_USER",
 };
+
+export const NOTIFICATION_CHANNEL = {
+  POST: "POST",
+  COMMENT: "COMMENT",
+}

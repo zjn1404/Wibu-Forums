@@ -5,7 +5,6 @@ import java.util.List;
 
 import jakarta.transaction.Transactional;
 
-import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
@@ -26,6 +25,7 @@ import com.nqt.identity_service.utils.Utils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

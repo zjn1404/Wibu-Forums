@@ -69,7 +69,7 @@ export const DisplayPosts: React.FC<{
     async (page: number) => {
       setLoading(true);
       try {
-        const response = await props.getPosts(page);;
+        const response = await props.getPosts(page);
         setTotalPages(response.data.result.totalPages);
         const transformedPosts = await Promise.all(
           response.data.result.data.map(async (post: any) => {

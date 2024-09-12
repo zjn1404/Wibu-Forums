@@ -1,9 +1,9 @@
 package com.nqt.event.dto;
 
+import java.util.List;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @ToString
 @Getter
@@ -15,5 +15,6 @@ public class NotificationEvent {
     String channel;
     List<Recipient> recipients;
     String subject;
+    String componentId;
     String body;
 }

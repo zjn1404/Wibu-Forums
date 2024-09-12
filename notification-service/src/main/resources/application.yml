@@ -34,3 +34,12 @@ message:
   controller:
     notification:
       mark-as-read-success: "Has marked the notification as read!"
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
