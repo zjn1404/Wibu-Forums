@@ -22,7 +22,7 @@ public interface UserProfileRepository extends Neo4jRepository<UserProfile, Stri
             + "WITH u, f "
             + "MERGE (u)-[:friend_of]-(f) "
             + "RETURN EXISTS((u)-[:friend_of]-(f))")
-    boolean addFriend(String userId, String friendId);
+    void addFriend(String userId, String friendId);
 
     @Query(
             value = "MATCH (u:user_profile {user_id: $userId})-[:friend_of]-(f:user_profile) "

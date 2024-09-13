@@ -8,6 +8,11 @@ spring:
     authentication:
       username: neo4j
       password: admin123
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 message:
   controller:
@@ -16,4 +21,10 @@ message:
       add-friend-fail: "Can't add friend"
       unfriend-success: "Unfriend successfully"
       unfriend-fail: "Can't unfriend"
+      response-add-friend-success: "Response add friend request successfully"
+
+app:
+  kafka:
+    topics:
+      notification: "notification"
 

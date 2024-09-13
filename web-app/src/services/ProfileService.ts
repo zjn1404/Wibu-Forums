@@ -1,5 +1,5 @@
 import { HttpClient } from "../configurations/HttpClient";
-import { API } from "../configurations/Configuration";
+import { API, PAGE_RESPONSE_PARAM } from "../configurations/Configuration";
 import { getAccessToken } from "./LocalStorageService";
 
 export const getMyProfile = async () => {
@@ -41,7 +41,7 @@ export const updateProfile = async (
 
 export const addFriend = async (friendId: string) => {
   return await HttpClient.post(
-    `${API.ADD_FRIEND}?friendId=${encodeURIComponent(friendId)}`,
+    `${API.SEND_ADD_FRIEND_REQUEST}?friendId=${(friendId)}`,
     null, // no request body
     {
       headers: {
@@ -49,6 +49,37 @@ export const addFriend = async (friendId: string) => {
       },
     }
   );
+};
+
+export const responseAddFriendRequest = async (
+  friendId: string,
+  accept: boolean
+) => {
+  return await HttpClient.post(
+    API.RESPONSE_ADD_FRIEND_REQUEST,
+    {
+      friendId: friendId,
+      isAccepted: accept,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    }
+  );
+};
+
+export const getAllAddFriendRequests = async (userId: string, page: number) => {
+  return await HttpClient.get(API.ALL_ADD_FRIEND_REQUESTS, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+    params: {
+      userId: userId,
+      page: page,
+      size: PAGE_RESPONSE_PARAM.SIZE,
+    },
+  });
 };
 
 export const unfriend = async (friendId: string) => {

@@ -9,8 +9,6 @@ import com.nqt.profile_service.dto.response.UserProfileResponse;
 
 public interface UserProfileService {
 
-    boolean addFriend(String friendId);
-
     UserProfileResponse createUserProfile(UserProfileCreationRequest request);
 
     UserProfileResponse updateUserProfile(String id, UserProfileUpdateRequest request);

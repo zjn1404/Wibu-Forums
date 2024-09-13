@@ -24,14 +24,6 @@ import lombok.experimental.NonFinal;
 public class UserProfileController {
 
     @NonFinal
-    @Value("${message.controller.user-profile.add-friend-success}")
-    String addFriendSuccessMessage;
-
-    @NonFinal
-    @Value("${message.controller.user-profile.add-friend-fail}")
-    String addFriendFailMessage;
-
-    @NonFinal
     @Value("${message.controller.user-profile.unfriend-success}")
     String unfriendSuccessMessage;
 
@@ -40,14 +32,6 @@ public class UserProfileController {
     String unfriendFailMessage;
 
     UserProfileService userProfileService;
-
-    @PostMapping("/add-friend")
-    public ApiResponse<Void> addFriend(@RequestParam("friendId") String friendId) {
-        boolean isFriendAdded = userProfileService.addFriend(friendId);
-        String response = isFriendAdded ? addFriendSuccessMessage : addFriendFailMessage;
-
-        return ApiResponse.<Void>builder().message(response).build();
-    }
 
     @GetMapping("/my-profile")
     public ApiResponse<UserProfileResponse> getMyProfile() {

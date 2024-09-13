@@ -11,7 +11,9 @@ export const API = {
   PROFILE_BY_USER_ID: "/profile/users/get-by-user-id",
   MY_PROFILE: "/profile/users/my-profile",
   IS_FRIEND: "/profile/users/is-friend",
-  ADD_FRIEND: "/profile/users/add-friend",
+  SEND_ADD_FRIEND_REQUEST: "/profile/requests/add-friend",
+  RESPONSE_ADD_FRIEND_REQUEST: "/profile/requests/add-friend-response",
+  ALL_ADD_FRIEND_REQUESTS: "/profile/requests/all-add-friend",
   UNFRIEND: "/profile/users/unfriend",
   UPDATE_PROFILE: "/profile/users",
   GET_FRIENDS: "/profile/users/get-friends",
@@ -54,4 +56,9 @@ export const ROLE = {
 export const NOTIFICATION_CHANNEL = {
   POST: "POST",
   COMMENT: "COMMENT",
+  FRIEND: "FRIEND",
+}
+
+export const PAGE_RESPONSE_PARAM = {
+  SIZE: 10
 }

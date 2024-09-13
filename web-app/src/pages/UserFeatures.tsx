@@ -29,7 +29,6 @@ export const UserFeatures = () => {
 
   const handleAddFriend = async () => {
     await addFriend(userId);
-    setFriendStatus(true);
   };
 
   const handleUnfriend = async () => {

@@ -126,9 +126,10 @@ export const Notifications = () => {
                     notification.channel === NOTIFICATION_CHANNEL.COMMENT ||
                     notification.channel === NOTIFICATION_CHANNEL.POST
                       ? `/post/${notification.componentId}`
-                      : "/"
+                      : "/friends"
                   }
                   style={{ textDecoration: "none", flexGrow: 1, color: "#3194bb" }}
+                  onClick={() => markNotificationsAsRead([notification.id])}
                 >
                   <Typography sx={{ marginLeft: 2 }}>
                     {notification.body}

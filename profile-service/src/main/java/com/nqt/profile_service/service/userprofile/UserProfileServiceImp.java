@@ -117,17 +117,6 @@ public class UserProfileServiceImp implements UserProfileService {
                 .toList();
     }
 
-    // TODO: implement addFriend feature
-    // Send add friend request to notification-service
-    // Save friend request in notification-service
-    // Receive add friend response and send to notification-service to update status and notify to user
-    // content in notification event is "true" or "false"
-    @Override
-    public boolean addFriend(String friendId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userProfileRepository.addFriend(authentication.getName(), friendId);
-    }
-
     @Override
     public boolean isFriendOf(String friendId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
