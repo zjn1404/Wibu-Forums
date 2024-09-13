@@ -75,6 +75,8 @@ A community-driven platform where anime and manga enthusiasts (wibus) come toget
     - Manages user profile operations (CRUD).
     - Handles user relationship operations (e.g., add friend, unfriend).
     - Uses Kafka to send friend request and response messages to the Notification Service for user notifications.
+  - **Add-friend Workflow Diagram:**
+  ![Add friend workflow diagram](./readme-img/add-friend-workflow.png)
 
 #### 4. Post Service
 - **DBMS:** MongoDB
