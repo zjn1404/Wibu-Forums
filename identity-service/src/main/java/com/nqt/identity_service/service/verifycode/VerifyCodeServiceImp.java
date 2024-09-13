@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,7 @@ import com.nqt.identity_service.utils.Utils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,6 +33,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class VerifyCodeServiceImp implements VerifyCodeService {
+
+    @NonFinal
+    @Value("${app.kafka.topics.verification-mail}")
+    String verificationMailTopic;
 
     VerifyCodeRepository verifyCodeRepository;
     UserRepository userRepository;
@@ -64,6 +70,7 @@ public class VerifyCodeServiceImp implements VerifyCodeService {
         NotificationEvent notificationEvent = NotificationEvent.builder()
                 .channel("EMAIL")
                 .recipients(List.of(Recipient.builder()
+                        .userId(user.getId())
                         .name(user.getUsername())
                         .email(user.getEmail())
                         .build()))
@@ -71,7 +78,7 @@ public class VerifyCodeServiceImp implements VerifyCodeService {
                 .body(utils.buildVerificationMailBody(user))
                 .build();
 
-        kafkaTemplate.send("notification-delivery", notificationEvent);
+        kafkaTemplate.send(verificationMailTopic, notificationEvent);
     }
 
     @Override

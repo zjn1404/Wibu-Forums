@@ -1,10 +1,7 @@
 package com.nqt.post_service.service.post;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -17,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nqt.event.dto.Recipient;
+import com.nqt.event.notification.NotificationType;
 import com.nqt.post_service.dto.request.post.PostRequest;
 import com.nqt.post_service.dto.request.post.PostUpdateRequest;
 import com.nqt.post_service.dto.response.ApiResponse;
@@ -30,11 +29,13 @@ import com.nqt.post_service.mapper.PostMapper;
 import com.nqt.post_service.repository.CommentRepository;
 import com.nqt.post_service.repository.PostRepository;
 import com.nqt.post_service.repository.httpclient.ProfileClient;
+import com.nqt.post_service.service.kafka.KafkaProduceService;
 import com.nqt.post_service.utils.formatter.DateFormatter;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -42,6 +43,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostServiceImp implements PostService {
+
+    @NonFinal
+    String defaultSortProperty = "postedDate";
+
     PostRepository postRepository;
     CommentRepository commentRepository;
 
@@ -51,9 +56,14 @@ public class PostServiceImp implements PostService {
 
     DateFormatter dateFormatter;
 
+    KafkaProduceService kafkaProduceService;
+
     @Override
     public PostResponse createPost(PostRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserProfileResponse userProfile =
+                profileClient.getByUserId(authentication.getName()).getResult();
+
         List<Binary> images = null;
         if (request.getImages() != null) {
             images = new ArrayList<>();
@@ -77,13 +87,39 @@ public class PostServiceImp implements PostService {
         PostResponse postResponse = postMapper.toPostResponse(postRepository.save(post));
         postResponse.setImages(encodeImages(post.getImages()));
 
+        List<Recipient> recipients = profileClient.getAllFriends().getResult().stream()
+                .map(profile -> Recipient.builder()
+                        .userId(profile.getUserId())
+                        .name(String.format("%s %s", profile.getFirstName(), profile.getLastName()))
+                        .build())
+                .toList();
+
+        String body = NotificationType.CREATE_POST.getBody() + userProfile.getFirstName() + userProfile.getLastName();
+        kafkaProduceService.sendNotification(NotificationType.CREATE_POST, recipients, post.getId(), body);
+
         return postResponse;
+    }
+
+    @Override
+    public PageResponse<PostResponse> getPostById(String postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+        PostResponse postResponse = postMapper.toPostResponse(post);
+        postResponse.setImages(encodeImages(post.getImages()));
+        postResponse.setFormattedPostedDate(dateFormatter.format(post.getPostedDate()));
+
+        return PageResponse.<PostResponse>builder()
+                .currentPage(1)
+                .totalPages(1)
+                .totalElements(1)
+                .pageSize(1)
+                .data(List.of(postResponse))
+                .build();
     }
 
     @Override
     public PageResponse<PostResponse> getMyPosts(int currentPage, int pageSize) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Sort sort = Sort.by(Sort.Direction.DESC, "postedDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, defaultSortProperty);
         // index-base 1
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
 
@@ -100,7 +136,7 @@ public class PostServiceImp implements PostService {
 
     @Override
     public PageResponse<PostResponse> getPostByUserId(String userId, int currentPage, int pageSize) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "postedDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, defaultSortProperty);
         // index-base 1
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
 
@@ -117,7 +153,7 @@ public class PostServiceImp implements PostService {
 
     @Override
     public PageResponse<PostResponse> getFriendPosts(int currentPage, int pageSize) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "postedDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, defaultSortProperty);
         // index-base 1
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize, sort);
         ApiResponse<PageResponse<UserProfileResponse>> friends = profileClient.getFriends(currentPage, pageSize);

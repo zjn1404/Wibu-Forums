@@ -109,9 +109,12 @@ public class UserProfileServiceImp implements UserProfileService {
     }
 
     @Override
-    public boolean addFriend(String friendId) {
+    public List<UserProfileResponse> getAllFriends() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userProfileRepository.addFriend(authentication.getName(), friendId);
+
+        return userProfileRepository.findAllFriendsByUserId(authentication.getName()).stream()
+                .map(userProfileMapper::toUserProfileResponse)
+                .toList();
     }
 
     @Override

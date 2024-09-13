@@ -37,6 +37,13 @@ public class PostController {
                 .build();
     }
 
+    @GetMapping("/get-by-id/{id}")
+    public ApiResponse<PageResponse<PostResponse>> getPostById(@PathVariable("id") String id) {
+        return ApiResponse.<PageResponse<PostResponse>>builder()
+                .result(postService.getPostById(id))
+                .build();
+    }
+
     @GetMapping("/my-posts")
     public ApiResponse<PageResponse<PostResponse>> getMyPosts(
             @RequestParam(value = "page", required = false, defaultValue = "1") int currentPage,

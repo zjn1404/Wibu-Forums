@@ -1,5 +1,7 @@
 package com.nqt.post_service.repository.httpclient;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,4 +21,10 @@ public interface ProfileClient {
     ApiResponse<PageResponse<UserProfileResponse>> getFriends(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size);
+
+    @GetMapping(value = "/users/get-by-user-id", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<UserProfileResponse> getByUserId(@RequestParam("userId") String userId);
+
+    @GetMapping(value = "/users/get-all-friends", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<List<UserProfileResponse>> getAllFriends();
 }

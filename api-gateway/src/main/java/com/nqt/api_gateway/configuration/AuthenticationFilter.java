@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -25,6 +26,7 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -40,7 +42,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     @NonFinal
     String[] publicEndpoints = {
-            "/identity/users/registration", "/identity/auth/.*", "/notification/email/send", "/identity/verify.*"
+            "/identity/users/registration", "/identity/auth/.*", "/notification/email/send", "/identity/verify.*", "/notification/ws/.*"
     };
 
     @NonFinal
@@ -80,7 +82,13 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     }
 
     private boolean isPublicEndpoint(ServerHttpRequest request) {
-        return Arrays.stream(publicEndpoints).anyMatch(e -> request.getURI().getPath().matches(prefixApi + e));
+        String requestPath = request.getURI().getPath();
+
+        return Arrays.stream(publicEndpoints)
+                .anyMatch(pattern -> {
+                    String fullPattern = prefixApi + pattern;
+                    return requestPath.matches(fullPattern);
+                });
     }
 
     private Mono<Void> unauthenticated(ServerHttpResponse response) {

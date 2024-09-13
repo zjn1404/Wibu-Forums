@@ -11,6 +11,14 @@ export const createPost = async (formData: FormData) => {
   });
 };
 
+export const getPostById = async (id: string) => {
+  return await HttpClient.get(`${API.GET_POST_BY_ID}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
+};
+
 export const getMyPosts = async (page: any) => {
   return await HttpClient.get(API.MY_POSTS, {
     headers: {
@@ -23,12 +31,12 @@ export const getMyPosts = async (page: any) => {
   });
 };
 
-export const getPostById = async (userId: string, page: number) => {
+export const getPostByUserId = async (userId: string, page: number) => {
   return await HttpClient.get(API.POST_BY_USER_ID, {
     params: {
       userId: userId,
       page: page,
-      size: 10
+      size: 10,
     },
     headers: {
       Authorization: `Bearer ${getAccessToken()}`,

@@ -12,6 +12,8 @@ import { ReadOnlyProfile } from "../pages/ReadOnlyProfile";
 import { UserPosts } from "../pages/UserPosts";
 import { UserFeatures } from "../pages/UserFeatures";
 import { Friends } from "../pages/Friends";
+import { Notifications } from "../pages/Notifications";
+import { SpecificPost } from "../pages/SpecificPost";
 
 export const AppRoutes = () => {
   return (
@@ -27,9 +29,11 @@ export const AppRoutes = () => {
         <Route path="/profile/:userId" Component={ReadOnlyProfile} />
         <Route path="/account" Component={Account} />
         <Route path="/my-posts" Component={MyPost} />
-        <Route path="/post/:userId" Component={UserPosts} />
+        <Route path="/post/:id" Component={SpecificPost} />
+        <Route path="/post/user/:userId" Component={UserPosts} />
         <Route path="/user/:userId" Component={UserFeatures} />
         <Route path="/friends" Component={Friends} />
+        <Route path="/notifications" Component={Notifications} />
       </Routes>
     </Router>
   );

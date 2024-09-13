@@ -159,7 +159,6 @@ export const DisplayedPost: React.FC<{
 
     setUserRole(roles[0]);
     setJwtUserId(userId);
-    console.log(`roles: ${userRole}, userId: ${jwtUserId}`);
     return () => {};
   });
 
@@ -242,7 +241,7 @@ export const DisplayedPost: React.FC<{
         >
           <Link
             component={RouterLink}
-            to={userId === jwtUserId ? 'profile' : `/user/${userId}`}
+            to={userId === jwtUserId ? '/profile' : `/user/${userId}`}
             variant="body2"
             sx={{
               fontSize: 16,

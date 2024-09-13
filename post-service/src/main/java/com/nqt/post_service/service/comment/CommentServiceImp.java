@@ -11,16 +11,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.nqt.event.dto.Recipient;
+import com.nqt.event.notification.NotificationType;
 import com.nqt.post_service.dto.request.comment.CommentCreationRequest;
 import com.nqt.post_service.dto.request.comment.CommentUpdateRequest;
 import com.nqt.post_service.dto.response.CommentResponse;
 import com.nqt.post_service.dto.response.PageResponse;
+import com.nqt.post_service.dto.response.UserProfileResponse;
 import com.nqt.post_service.entity.Comment;
+import com.nqt.post_service.entity.Post;
 import com.nqt.post_service.exception.AppException;
 import com.nqt.post_service.exception.ErrorCode;
 import com.nqt.post_service.mapper.CommentMapper;
 import com.nqt.post_service.repository.CommentRepository;
 import com.nqt.post_service.repository.PostRepository;
+import com.nqt.post_service.repository.httpclient.ProfileClient;
+import com.nqt.post_service.service.kafka.KafkaProduceService;
 import com.nqt.post_service.utils.formatter.DateFormatter;
 
 import lombok.AccessLevel;
@@ -35,9 +41,13 @@ public class CommentServiceImp implements CommentService {
     CommentRepository commentRepository;
     PostRepository postRepository;
 
+    ProfileClient profileClient;
+
     CommentMapper commentMapper;
 
     DateFormatter dateFormatter;
+
+    KafkaProduceService kafkaProduceService;
 
     @Override
     public CommentResponse createComment(CommentCreationRequest request) {
@@ -46,6 +56,11 @@ public class CommentServiceImp implements CommentService {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserProfileResponse userProfile =
+                profileClient.getByUserId(authentication.getName()).getResult();
+        Post post = postRepository
+                .findById(request.getPostId())
+                .orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 
         Comment comment = Comment.builder()
                 .userId(authentication.getName())
@@ -60,6 +75,18 @@ public class CommentServiceImp implements CommentService {
         CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
         commentResponse.setFormattedPostedDate(dateFormatter.format(commentResponse.getModifiedDate()));
 
+        Recipient recipient = Recipient.builder()
+                .userId(post.getUserId())
+                .name(String.format("%s %s", userProfile.getFirstName(), userProfile.getLastName()))
+                .build();
+
+        String body = userProfile.getFirstName() + " " + userProfile.getLastName()
+                + NotificationType.CREATE_COMMENT.getBody();
+
+        if (!post.getUserId().equals(authentication.getName())) {
+            kafkaProduceService.sendNotification(
+                    NotificationType.CREATE_COMMENT, List.of(recipient), comment.getPostId(), body);
+        }
         return commentResponse;
     }
 

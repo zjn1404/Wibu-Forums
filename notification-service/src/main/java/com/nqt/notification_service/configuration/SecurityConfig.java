@@ -19,16 +19,16 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_POST_ENDPOINTS = {"/email/send"};
 
-    private static final String[] PUBLIC_GET_ENDPOINTS = {};
+    private static final String[] PUBLIC_GET_ENDPOINTS = {"/ws/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             CustomerJwtDecoder jwtDecoder,
-            AfterBearerTokenAuthenticationFilterExceptionHandler exceptionHandler)
+            AfterBearerTokenAuthenticationFilterExceptionHandler afterBearerTokenAuthenticationFilterExceptionHandler)
             throws Exception {
 
-        http.addFilterBefore(exceptionHandler, LogoutFilter.class);
+        http.addFilterBefore(afterBearerTokenAuthenticationFilterExceptionHandler, LogoutFilter.class);
 
         http.authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
                 .permitAll()

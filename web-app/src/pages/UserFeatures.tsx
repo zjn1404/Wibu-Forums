@@ -29,7 +29,6 @@ export const UserFeatures = () => {
 
   const handleAddFriend = async () => {
     await addFriend(userId);
-    setFriendStatus(true);
   };
 
   const handleUnfriend = async () => {
@@ -102,7 +101,7 @@ export const UserFeatures = () => {
             </Button>
             <Button
               variant="outlined"
-              onClick={() => navigate(`/post/${userId}`)}
+              onClick={() => navigate(`/post/user/${userId}`)}
               sx={{
                 width: "100%",
                 marginBottom: 2,

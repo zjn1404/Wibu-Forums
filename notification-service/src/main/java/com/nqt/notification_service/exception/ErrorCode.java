@@ -22,8 +22,9 @@ public enum ErrorCode {
     INVALID_TOKEN(3002, HttpStatus.UNAUTHORIZED, "Invalid Token"),
     // Unauthorized error (4xxx)
     UNAUTHORIZED(4001, HttpStatus.FORBIDDEN, "Don't have permission"),
-// Not Found error (5xxx)
-;
+    // Not Found error (5xxx)
+    NOTIFICATION_NOT_FOUND(5005, HttpStatus.NOT_FOUND, "Notification Not Found"),
+    ;
 
     final int code;
     final HttpStatus httpStatus;
