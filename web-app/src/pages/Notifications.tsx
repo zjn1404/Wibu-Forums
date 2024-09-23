@@ -32,7 +32,10 @@ export const Notifications = () => {
     const fetchNotifications = async () => {
       try {
         setIsFetching(true);
-        const unreadNotifications = await fetchUnreadNotifications();
+        const unreadNotifications = await fetchUnreadNotifications(
+          page,
+          PAGE_SIZE
+        );
         setNotifications((prev) => [...prev, ...unreadNotifications]);
         setHasMore(unreadNotifications.length === PAGE_SIZE);
         setIsFetching(false);
@@ -116,7 +119,7 @@ export const Notifications = () => {
                   }}
                 >
                   {selectedNotifications.has(notification.id) ? (
-                    <CheckBox sx={{ color: "#3194bb"}} />
+                    <CheckBox sx={{ color: "#3194bb" }} />
                   ) : (
                     <CheckBoxOutlineBlank />
                   )}
@@ -128,7 +131,11 @@ export const Notifications = () => {
                       ? `/post/${notification.componentId}`
                       : "/friends"
                   }
-                  style={{ textDecoration: "none", flexGrow: 1, color: "#3194bb" }}
+                  style={{
+                    textDecoration: "none",
+                    flexGrow: 1,
+                    color: "#3194bb",
+                  }}
                   onClick={() => markNotificationsAsRead([notification.id])}
                 >
                   <Typography sx={{ marginLeft: 2 }}>
@@ -146,13 +153,15 @@ export const Notifications = () => {
             <CircularProgress sx={{ display: "block", margin: "20px auto" }} />
           )}
 
-          {hasMore && !isFetching && (
+          {true && (
             <Button
               onClick={loadMoreNotifications}
-              disabled={isFetching}
               variant="contained"
-              color="primary"
-              sx={{ display: "block", margin: "20px auto" }}
+              sx={{
+                display: "block",
+                margin: "20px auto",
+                backgroundColor: "#3194bb",
+              }}
             >
               Load More
             </Button>
@@ -162,7 +171,11 @@ export const Notifications = () => {
             <Button
               variant="contained"
               onClick={handleMarkAsRead}
-              sx={{ display: "block", margin: "20px auto", backgroundColor: "#3194bb" }}
+              sx={{
+                display: "block",
+                margin: "20px auto",
+                backgroundColor: "#3194bb",
+              }}
             >
               Mark as Read
             </Button>

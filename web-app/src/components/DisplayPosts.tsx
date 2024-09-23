@@ -73,7 +73,6 @@ export const DisplayPosts: React.FC<{
         setTotalPages(response.data.result.totalPages);
         const transformedPosts = await Promise.all(
           response.data.result.data.map(async (post: any) => {
-            // Fetch comments for each post
             const commentsResponse = await getCommentsOfPost(
               post.id,
               commentPage
@@ -89,7 +88,6 @@ export const DisplayPosts: React.FC<{
               })
             );
 
-            // Transform post data
             return {
               id: post.id,
               avatarUrl: post.user?.avatarUrl ?? "",

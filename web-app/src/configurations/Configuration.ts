@@ -33,7 +33,11 @@ export const API = {
   REFRESH_TOKEN: "/identity/auth/refresh",
   NOTIFICATION_SOCKET: "/notification/ws",
   UNREAD_NOTIFICATIONS: "/notification/unread-notifications",
-  MARK_AS_READ: "/notification/mark-as-read",
+  MARK_NOTIFICATION_AS_READ: "/notification/mark-as-read",
+  MESSAGE_SOCKET: "/message/ws",
+  GET_MESSAGE: "/message/get-all-messages",
+  MARK_MESSAGE_AS_READ: "/message/mark-as-read",
+  SERVER_CHAT_DESTINATION: "/app/chat",
 };
 
 export const OAUTHCONFIG = {

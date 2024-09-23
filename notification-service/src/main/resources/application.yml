@@ -29,6 +29,9 @@ app:
     topics:
       verification-mail: "verification-mail"
       notification: "notification"
+  socket:
+    destination:
+      notification: "/queue/notifications"
 
 message:
   controller:

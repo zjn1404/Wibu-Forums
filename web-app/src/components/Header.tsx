@@ -5,7 +5,7 @@ import { MdGroups } from "react-icons/md";
 import { logOut } from "../services/AuthenticationService";
 import { UserProfile } from "../entity/UserProfile";
 import { Avatar } from "@mui/material";
-import { fetchUnreadNotifications } from "../services/NotificationService";
+import { fetchUnreadNotificationsWithoutParams } from "../services/NotificationService";
 
 export const Header: React.FC<{
   user?: UserProfile;
@@ -15,7 +15,7 @@ export const Header: React.FC<{
   useEffect(() => {
     const checkUnreadNotifications = async () => {
       try {
-        const unreadNotifications = await fetchUnreadNotifications();
+        const unreadNotifications = await fetchUnreadNotificationsWithoutParams();
         if (unreadNotifications && unreadNotifications.length > 0) {
           setHasUnreadNotifications(true);
         } else {

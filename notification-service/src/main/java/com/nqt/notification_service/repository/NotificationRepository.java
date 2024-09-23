@@ -13,4 +13,7 @@ public interface NotificationRepository extends MongoRepository<Notification, St
 
     @Query("{ 'recipients_read_status.?#{[0]}': false }")
     Page<Notification> findAllUnreadNotifications(String userId, Pageable pageable);
+
+    @Query("{ 'recipients_read_status': { $elemMatch: { $exists: true, $eq: true } } }")
+    void deleteAllReadNotifications();
 }

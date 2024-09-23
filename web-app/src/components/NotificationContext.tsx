@@ -4,7 +4,6 @@ import React, {
   useState,
   useEffect,
   ReactNode,
-  ReactElement,
 } from "react";
 import { connectSocketServer } from "../services/NotificationService";
 import { Notification } from "../entity/Notification";

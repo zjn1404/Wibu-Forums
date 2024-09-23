@@ -1,0 +1,43 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /message
+
+spring:
+  application:
+    name: message-service
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/message-service?authSource=admin
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 256MB
+      max-request-size: 256MB
+
+app:
+  services:
+    profile:
+      url: http://localhost:8081/profile
+  kafka:
+    topics:
+      notification: "notification"
+
+message:
+  controller:
+    message:
+      mark-as-read-success: "Mark as read successfully"
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG

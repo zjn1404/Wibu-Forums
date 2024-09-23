@@ -1,11 +1,10 @@
 import SockJS from "sockjs-client";
-import { Client, IMessage, StompConfig } from "@stomp/stompjs";
+import { Client, IMessage } from "@stomp/stompjs";
 import { API } from "../configurations/Configuration";
 import { Notification } from "../entity/Notification";
 import { HttpClient } from "../configurations/HttpClient";
-import { getAccessToken } from "./LocalStorageService";
 import { useNotification } from "../components/NotificationContext";
-import { getProfileFromLocalStorage } from "./LocalStorageService";
+import { getProfileFromLocalStorage, getAccessToken } from "./LocalStorageService";
 import { UserProfile } from "../entity/UserProfile";
 
 export const connectSocketServer = (
@@ -39,9 +38,8 @@ export const connectSocketServer = (
           const notification: Notification = JSON.parse(message.body);
           onNotificationReceived(notification);
 
-          // Show notification using the context
           const { showNotification } = useNotification();
-          showNotification(notification.body); // Adjust as needed
+          showNotification(notification.body);
         } catch (e) {
           console.error("Failed to parse notification:", e);
         }
@@ -67,7 +65,19 @@ export const connectSocketServer = (
 };
 
 // Fetch unread notifications from the server
-export const fetchUnreadNotifications = async (): Promise<Notification[]> => {
+export const fetchUnreadNotifications = async (page: number, size: number): Promise<Notification[]> => {
+  return await HttpClient.get(API.UNREAD_NOTIFICATIONS, {
+    params:{
+      page: page,
+      size: size
+    },
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  }).then((response) => response.data.result.data);
+};
+
+export const fetchUnreadNotificationsWithoutParams = async (): Promise<Notification[]> => {
   return await HttpClient.get(API.UNREAD_NOTIFICATIONS, {
     headers: {
       Authorization: `Bearer ${getAccessToken()}`,
@@ -78,7 +88,7 @@ export const fetchUnreadNotifications = async (): Promise<Notification[]> => {
 // Mark notifications as read
 export const markNotificationsAsRead = async (notificationIds: string[]) => {
   await HttpClient.put(
-    API.MARK_AS_READ,
+    API.MARK_NOTIFICATION_AS_READ,
     {
       notificationIds,
     },

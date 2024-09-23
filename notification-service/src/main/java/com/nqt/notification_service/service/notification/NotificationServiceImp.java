@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +40,10 @@ public class NotificationServiceImp implements NotificationService {
     @NonFinal
     String defaultSortProperty = "created_date";
 
+    @NonFinal
+    @Value("${app.socket.destination.notification}")
+    String socketNotificationDestination;
+
     NotificationRepository notificationRepository;
 
     NotificationMapper notificationMapper;
@@ -58,7 +63,8 @@ public class NotificationServiceImp implements NotificationService {
         notificationResponse.setFormatedCreatedDate(dateFormatter.format(notification.getCreatedDate()));
 
         for (Recipient recipient : notificationEvent.getRecipients()) {
-            messagingTemplate.convertAndSendToUser(recipient.getUserId(), "/queue/notifications", notificationResponse);
+            messagingTemplate.convertAndSendToUser(
+                    recipient.getUserId(), socketNotificationDestination, notificationResponse);
         }
     }
 

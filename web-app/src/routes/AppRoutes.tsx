@@ -14,6 +14,7 @@ import { UserFeatures } from "../pages/UserFeatures";
 import { Friends } from "../pages/Friends";
 import { Notifications } from "../pages/Notifications";
 import { SpecificPost } from "../pages/SpecificPost";
+import { Chat } from "../pages/Chat";
 
 export const AppRoutes = () => {
   return (
@@ -34,6 +35,7 @@ export const AppRoutes = () => {
         <Route path="/user/:userId" Component={UserFeatures} />
         <Route path="/friends" Component={Friends} />
         <Route path="/notifications" Component={Notifications} />
+        <Route path="/messages" Component={Chat} />
       </Routes>
     </Router>
   );

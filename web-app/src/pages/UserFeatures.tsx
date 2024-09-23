@@ -117,13 +117,15 @@ export const UserFeatures = () => {
             </Button>
             <Button
               variant="outlined"
-              disabled
+              onClick={() => navigate(`/messages`)}
               sx={{
                 width: "100%",
-                color: "#aaa",
-                borderColor: "#ccc",
+                marginBottom: 2,
+                borderColor: "#1b1e21",
+                color: "#1b1e21",
                 "&:hover": {
-                  borderColor: "#ccc",
+                  backgroundColor: "#1b1e21",
+                  color: "#fff",
                 },
               }}
             >
