@@ -33,7 +33,7 @@ public class NotificationController {
     @Value("${message.controller.notification.mark-as-read-success}")
     String markAsReadSuccessMessage;
 
-    @KafkaListener(topics = "${app.kafka.topics.verification-mail}")
+    @KafkaListener(topics = {"${app.kafka.topics.verification-mail}", "${app.kafka.topics.send-verification-code}"})
     public void listenVerificationMail(NotificationEvent message) {
 
         mailService.sendMail(SendMailRequest.builder()

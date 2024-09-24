@@ -28,6 +28,7 @@ app:
   kafka:
     topics:
       verification-mail: "verification-mail"
+      send-verification-code: "notification-delivery"
       notification: "notification"
   socket:
     destination:
