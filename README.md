@@ -19,7 +19,7 @@ A community-driven platform where anime and manga enthusiasts (wibus) come toget
 - [Running the Application](#v-running-the-application)
 
 ## I. Project Diagram
-![Project Diagram](./readme-img/project-diagram.png)
+![Project Diagram](./readme-img/project-diagram-v2.png)
 
 ## II. Tech Stack
 
