@@ -16,6 +16,8 @@ import com.nqt.identity_service.entity.VerifyCode;
 public interface VerifyCodeRepository extends JpaRepository<VerifyCode, String> {
     Optional<VerifyCode> findByVerifyCodeAndUserId(String verifyCode, String userId);
 
+    Optional<VerifyCode> findVerifyCodeByUserId(String userId);
+
     boolean existsByUserId(String userId);
 
     @Modifying

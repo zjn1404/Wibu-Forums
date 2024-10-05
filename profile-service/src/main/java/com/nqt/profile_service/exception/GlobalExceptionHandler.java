@@ -11,13 +11,14 @@ import com.nqt.profile_service.dto.response.ApiResponse;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException() {
+    public ResponseEntity<Object> handleException(Exception ex) {
         ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
 
         return ResponseEntity.status(errorCode.getCode())
                 .body(ApiResponse.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
+                        .result(ex.getMessage())
                         .build());
     }
 

@@ -27,6 +27,7 @@ import com.nqt.identity_service.dto.response.IntrospectResponse;
 import com.nqt.identity_service.dto.response.OutboundUserResponse;
 import com.nqt.identity_service.entity.InvalidatedToken;
 import com.nqt.identity_service.entity.User;
+import com.nqt.identity_service.entity.VerifyCode;
 import com.nqt.identity_service.exception.AppException;
 import com.nqt.identity_service.exception.ErrorCode;
 import com.nqt.identity_service.repository.InvalidatedTokenRepository;
@@ -35,6 +36,7 @@ import com.nqt.identity_service.repository.VerifyCodeRepository;
 import com.nqt.identity_service.repository.outboundidentity.OutboundIdentityClient;
 import com.nqt.identity_service.repository.outboundidentity.OutboundUserClient;
 import com.nqt.identity_service.service.user.UserService;
+import com.nqt.identity_service.service.verifycode.VerifyCodeService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +95,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     UserService userService;
 
+    VerifyCodeService verifyCodeService;
+
     PasswordEncoder passwordEncoder;
 
     @Override
@@ -101,8 +105,13 @@ public class AuthenticationServiceImp implements AuthenticationService {
         User user = userRepository
                 .findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        if (verifyCodeRepository.existsByUserId(user.getId())) {
+        VerifyCode verifyCode =
+                verifyCodeRepository.findVerifyCodeByUserId(user.getId()).orElse(null);
+        if (verifyCode != null) {
+            if (verifyCode.getExpiryTime().before(new Date())) {
+                verifyCodeRepository.delete(verifyCode);
+                verifyCodeService.sendVerifyMail(user);
+            }
             throw new AppException(ErrorCode.ACCOUNT_NOT_VERIFIED);
         }
 
