@@ -62,7 +62,6 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    @Transactional
     public User createInternalUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -81,6 +80,9 @@ public class UserServiceImp implements UserService {
         if (!Objects.isNull(request.getRoles())) {
             List<Role> roles = roleRepository.findAllById(request.getRoles());
             user.setRoles(new HashSet<>(roles));
+        } else {
+            Role role = roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+            user.setRoles(new HashSet<>(List.of(role)));
         }
 
         user = userRepository.save(user);

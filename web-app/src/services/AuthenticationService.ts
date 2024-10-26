@@ -5,10 +5,10 @@ import {
   removeRefreshToken,
   setAccessToken,
   setRefreshToken,
+  removeProfileFromLocalStorage
 } from "./LocalStorageService";
 import { HttpClient } from "../configurations/HttpClient";
 import { API } from "../configurations/Configuration";
-import { removeProfileFromLocalStorage } from "./LocalStorageService";
 
 export const logIn = async (username: string, password: string) => {
   const response = await HttpClient.post(API.LOGIN, {

@@ -12,12 +12,12 @@ import com.nqt.identity_service.dto.response.ApiResponse;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Object>> handleException() {
+    public ResponseEntity<ApiResponse<Object>> handleException(Exception ex) {
         ErrorCode uncategorizedError = ErrorCode.UNCATEGORIZED_EXCEPTION;
         return ResponseEntity.status(uncategorizedError.httpStatus)
                 .body(ApiResponse.builder()
                         .code(uncategorizedError.code)
-                        .message(uncategorizedError.message)
+                        .message(uncategorizedError.getMessage())
                         .build());
     }
 
